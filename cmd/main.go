@@ -1,6 +1,6 @@
 package main
 
-import "github.com/asbubam/klocust/cmd/klocust"
+import "github.com/DevopsArtFactory/klocust/cmd/klocust"
 
 func main() {
 	klocust.Execute()

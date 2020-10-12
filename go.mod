@@ -1,4 +1,4 @@
-module github.com/asbubam/klocust
+module github.com/DevopsArtFactory/klocust
 
 go 1.14
 
