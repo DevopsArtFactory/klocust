@@ -1,2 +1,2 @@
 # klocust
-A command-line tool for managing distributed [Locust](https://locust.io/) load testing on [Kubernetes](https://kubernetes.io/)
+A command-line tool for managing [Locust](https://locust.io/) distributed load testing on [Kubernetes](https://kubernetes.io/)
