@@ -4,6 +4,11 @@ define echo_target
 	@echo ">>> $@"
 endef
 
+ifeq (run,$(firstword $(MAKECMDGOALS)))
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(RUN_ARGS):;@:)
+endif
+
 fmt:
 	@$(echo_target)
 	@go fmt ./...
@@ -13,12 +18,12 @@ build: fmt
 	@go build -o build/klocust ./cmd/main.go
 	@ls -lh build/klocust
 
-clean: fmt
+clean:
 	@$(echo_target)
 	@rm -rf build/klocust
 
-run: clean build
+run:
 	@$(echo_target)
-	@build/klocust
+	@go run ./cmd/main.go $(RUN_ARGS)
 
 .PHONY: fmt build clean run

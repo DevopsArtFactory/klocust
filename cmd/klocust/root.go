@@ -2,9 +2,10 @@ package klocust
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,7 +18,9 @@ var rootCmd = &cobra.Command{
 	Short: "A command-line tool for managing Locust distributed load testing on Kubernetes",
 	Long:  `A command-line tool for managing Locust distributed load testing on Kubernetes`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		if err := cmd.Help(); err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
@@ -41,6 +44,9 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	rootCmd.AddCommand(NewCmdList())
+	rootCmd.AddCommand(NewCmdCompletion())
 }
 
 // initConfig reads in config file and ENV variables if set.
