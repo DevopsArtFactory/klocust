@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	v1 "k8s.io/api/apps/v1"
-	"log"
 	"os"
 	"strings"
 	"text/tabwriter"
@@ -13,10 +12,10 @@ import (
 
 const LocustMasterDeploymentPrefix = "locust-master-"
 
-func getLocustDeployments(namespace string) []v1.Deployment {
+func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 	deployments, err := kube.GetDeployments(namespace)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	var locustDeployments = make([]v1.Deployment, 0)
@@ -26,25 +25,33 @@ func getLocustDeployments(namespace string) []v1.Deployment {
 		}
 	}
 
-	return locustDeployments
+	return locustDeployments, nil
 }
 
-func PrintLocustDeployments(namespace string) {
+func PrintLocustDeployments(namespace string) error {
 	if namespace == "" {
-		namespace = kube.GetNamespaceFromCurrentContext()
+		var err error
+		namespace, err = kube.GetNamespaceFromCurrentContext()
+		if err != nil {
+			return err
+		}
 	}
 
-	locustDeployments := getLocustDeployments(namespace)
+	locustDeployments, err := getLocustDeployments(namespace)
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("%d locust deployments in %s namespace. (PREFIX: %s)\n",
 		len(locustDeployments), namespace, LocustMasterDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {
-		return
+		return nil
 	}
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 8, 1, '\t', tabwriter.AlignRight)
 	if _, err := fmt.Fprintf(writer, "\nDEPLOYMENT\tNAME\tREADY\tUP-TO-DATE\tAVAIABLE\tAGE\n"); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, d := range locustDeployments {
@@ -53,11 +60,13 @@ func PrintLocustDeployments(namespace string) {
 		if _, err := fmt.Fprintf(writer, "%s\t%s\t%d/%d\t%d\t%d\t%s\n",
 			d.Name, name, d.Status.ReadyReplicas, d.Status.Replicas,
 			d.Status.UpdatedReplicas, d.Status.AvailableReplicas, age); err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
 	if err := writer.Flush(); err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }

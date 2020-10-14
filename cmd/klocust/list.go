@@ -1,8 +1,10 @@
 package klocust
 
 import (
+	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"log"
 )
 
@@ -21,6 +23,11 @@ var listCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		klocust.PrintLocustDeployments(namespace)
+		if err := klocust.PrintLocustDeployments(namespace); err != nil {
+			if errors.IsUnauthorized(err) {
+				fmt.Println("Check your kubeconfig: ", err)
+			}
+			log.Fatal(err)
+		}
 	},
 }

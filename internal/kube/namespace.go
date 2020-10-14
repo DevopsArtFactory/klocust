@@ -2,14 +2,13 @@ package kube
 
 import (
 	"k8s.io/client-go/tools/clientcmd"
-	"log"
 )
 
-func GetNamespaceFromCurrentContext() string {
+func GetNamespaceFromCurrentContext() (string, error) {
 	clientCfg, err := clientcmd.NewDefaultClientConfigLoadingRules().Load()
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	return clientCfg.Contexts[clientCfg.CurrentContext].Namespace
+	return clientCfg.Contexts[clientCfg.CurrentContext].Namespace, nil
 }
