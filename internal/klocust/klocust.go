@@ -3,10 +3,11 @@ package klocust
 import (
 	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/olekukonko/tablewriter"
 	v1 "k8s.io/api/apps/v1"
 	"os"
+	"strconv"
 	"strings"
-	"text/tabwriter"
 	"time"
 )
 
@@ -42,31 +43,32 @@ func PrintLocustDeployments(namespace string) error {
 		return err
 	}
 
-	fmt.Printf("%d locust deployments in %s namespace. (PREFIX: %s)\n",
+	fmt.Printf(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
 		len(locustDeployments), namespace, LocustMasterDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {
 		return nil
 	}
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 8, 1, '\t', tabwriter.AlignRight)
-	if _, err := fmt.Fprintf(writer, "\nDEPLOYMENT\tNAME\tREADY\tUP-TO-DATE\tAVAIABLE\tAGE\n"); err != nil {
-		return err
-	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"DEPLOYMENT", "NAME", "READY", "UP-TO-DATE", "AVAILABLE", "AGE"})
+	table.SetHeaderAlignment(tablewriter.ALIGN_RIGHT)
+	table.SetAlignment(tablewriter.ALIGN_RIGHT)
 
 	for _, d := range locustDeployments {
 		name := d.Name[len(LocustMasterDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
-		if _, err := fmt.Fprintf(writer, "%s\t%s\t%d/%d\t%d\t%d\t%s\n",
-			d.Name, name, d.Status.ReadyReplicas, d.Status.Replicas,
-			d.Status.UpdatedReplicas, d.Status.AvailableReplicas, age); err != nil {
-			return err
-		}
-	}
 
-	if err := writer.Flush(); err != nil {
-		return err
+		table.Append([]string{
+			d.Name,
+			name,
+			strconv.Itoa(int(d.Status.ReadyReplicas)) + "/" + strconv.Itoa(int(d.Status.Replicas)),
+			strconv.Itoa(int(d.Status.UpdatedReplicas)),
+			strconv.Itoa(int(d.Status.AvailableReplicas)),
+			age.String()},
+		)
 	}
+	table.Render()
 
 	return nil
 }
