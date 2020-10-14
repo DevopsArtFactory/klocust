@@ -8,26 +8,32 @@ import (
 	"log"
 )
 
-func init() {
-	rootCmd.AddCommand(listCmd)
-	listCmd.Flags().StringP("namespace", "n", "", "kubernetes namespace name")
+func list(cmd *cobra.Command, args []string) {
+	namespace, err := cmd.Flags().GetString("namespace")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := klocust.PrintLocustDeployments(namespace); err != nil {
+		if errors.IsUnauthorized(err) {
+			fmt.Println("Check your kubeconfig: ", err)
+		}
+		log.Fatal(err)
+	}
 }
 
-var listCmd = &cobra.Command{
-	Aliases: []string{"ls"},
-	Use:     "list",
-	Short:   "Print all of Locust clusters",
-	Run: func(cmd *cobra.Command, args []string) {
-		namespace, err := cmd.Flags().GetString("namespace")
-		if err != nil {
-			log.Fatal(err)
-		}
+func NewCmdList() *cobra.Command {
+	newCmd := &cobra.Command{
+		Use:     "list",
+		Aliases: []string{"ls"},
+		Args: func(cmd *cobra.Command, args []string) error {
+			return cobra.OnlyValidArgs(cmd, args)
+		},
+		ValidArgs: []string{"list", "ls"},
+		Short:     "Print all of Locust clusters",
+		Run:       list,
+	}
 
-		if err := klocust.PrintLocustDeployments(namespace); err != nil {
-			if errors.IsUnauthorized(err) {
-				fmt.Println("Check your kubeconfig: ", err)
-			}
-			log.Fatal(err)
-		}
-	},
+	newCmd.Flags().StringP("namespace", "n", "", "kubernetes namespace name")
+	return newCmd
 }
