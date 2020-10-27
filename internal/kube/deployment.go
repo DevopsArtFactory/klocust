@@ -8,6 +8,20 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
+	client, err := newClient()
+	if err != nil {
+		return nil, err
+	}
+
+	deployment, err := client.AppsV1().Deployments(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return deployment, nil
+}
+
 func GetDeployments(namespace string) (*v1.DeploymentList, error) {
 	client, err := newClient()
 	if err != nil {

@@ -15,8 +15,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "klocust",
-	Short: "A command-line tool for managing Locust distributed load testing on Kubernetes",
-	Long:  `A command-line tool for managing Locust distributed load testing on Kubernetes`,
+	Short: "klocust - A command-line tool for managing Locust distributed load testing on Kubernetes",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Help(); err != nil {
 			log.Fatal(err)

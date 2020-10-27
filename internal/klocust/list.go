@@ -11,8 +11,6 @@ import (
 	"time"
 )
 
-const LocustMasterDeploymentPrefix = "locust-master-"
-
 func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 	deployments, err := kube.GetDeployments(namespace)
 	if err != nil {
@@ -51,17 +49,17 @@ func PrintLocustDeployments(namespace string) error {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"DEPLOYMENT", "NAME", "READY", "UP-TO-DATE", "AVAILABLE", "AGE"})
-	table.SetHeaderAlignment(tablewriter.ALIGN_RIGHT)
-	table.SetAlignment(tablewriter.ALIGN_RIGHT)
+	table.SetHeader([]string{"NAME", "DEPLOYMENT", "READY", "UP-TO-DATE", "AVAILABLE", "AGE"})
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, d := range locustDeployments {
 		name := d.Name[len(LocustMasterDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
 
 		table.Append([]string{
-			d.Name,
 			name,
+			d.Name,
 			strconv.Itoa(int(d.Status.ReadyReplicas)) + "/" + strconv.Itoa(int(d.Status.Replicas)),
 			strconv.Itoa(int(d.Status.UpdatedReplicas)),
 			strconv.Itoa(int(d.Status.AvailableReplicas)),

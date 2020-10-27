@@ -1,39 +1,26 @@
 package klocust
 
 import (
-	"fmt"
+	"context"
+	"github.com/DevopsArtFactory/klocust/cmd/builder"
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 	"github.com/spf13/cobra"
-	"k8s.io/apimachinery/pkg/api/errors"
-	"log"
+	"github.com/spf13/pflag"
+	"io"
 )
 
-func list(cmd *cobra.Command, args []string) {
-	namespace, err := cmd.Flags().GetString("namespace")
-	if err != nil {
-		log.Fatal(err)
-	}
+var (
+	namespace string
+)
 
-	if err := klocust.PrintLocustDeployments(namespace); err != nil {
-		if errors.IsUnauthorized(err) {
-			fmt.Println("Check your kubeconfig: ", err)
-		}
-		log.Fatal(err)
-	}
+func list(_ context.Context, _ io.Writer) error {
+	return klocust.PrintLocustDeployments(namespace)
 }
 
 func NewCmdList() *cobra.Command {
-	newCmd := &cobra.Command{
-		Use:     "list",
-		Aliases: []string{"ls"},
-		Args: func(cmd *cobra.Command, args []string) error {
-			return cobra.OnlyValidArgs(cmd, args)
-		},
-		ValidArgs: []string{"list", "ls"},
-		Short:     "Print all of Locust clusters",
-		Run:       list,
-	}
-
-	newCmd.Flags().StringP("namespace", "n", "", "kubernetes namespace name")
-	return newCmd
+	return builder.NewCmd("list").
+		WithDescription("Print all of Locust clusters").
+		WithFlags(func(f *pflag.FlagSet) {
+			f.StringVarP(&namespace, "namespace", "n", "", "Kubernetes namespace")
+		}).NoArgs(list)
 }
