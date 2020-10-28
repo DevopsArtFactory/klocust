@@ -1,9 +1,10 @@
+// completion from https://github.com/GoogleContainerTools/skaffold
 package klocust
 
 import (
-	"fmt"
+	"context"
+	"github.com/DevopsArtFactory/klocust/cmd/builder"
 	"io"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -30,34 +31,21 @@ Additionally, you may want to output the completion to a file and source in your
 	zshCompdef = "\ncompdef _klocust klocust\n"
 )
 
-func completion(cmd *cobra.Command, args []string) {
+func completion(_ context.Context, _ io.Writer, cmd *cobra.Command, args []string) error {
 	switch args[0] {
 	case "bash":
-		if err := findRootCmd(cmd).GenBashCompletion(os.Stdout); err != nil {
-			log.Fatal(err)
-		}
+		return findRootCmd(cmd).GenBashCompletion(os.Stdout)
 	case "zsh":
-		if err := runCompletionZsh(cmd, os.Stdout); err != nil {
-			log.Fatal(err)
-		}
+		return runCompletionZsh(cmd, os.Stdout)
 	}
+	return nil
 }
 
 // NewCmdCompletion returns the cobra command that outputs shell completion code
 func NewCmdCompletion() *cobra.Command {
-	return &cobra.Command{
-		Use: "completion (bash|zsh)",
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) != 1 {
-				return fmt.Errorf("requires 1 arg, found %d", len(args))
-			}
-			return cobra.OnlyValidArgs(cmd, args)
-		},
-		ValidArgs: []string{"bash", "zsh"},
-		Short:     "Output shell completion for the given shell (bash or zsh)",
-		Long:      longDescription,
-		Run:       completion,
-	}
+	return builder.NewCmd("completion").
+		WithDescription("Output shell completion for the given shell (bash or zsh)").
+		ExactArgs(1, completion)
 }
 
 func runCompletionZsh(cmd *cobra.Command, out io.Writer) error {
