@@ -1,0 +1,81 @@
+baseURL = "https://klocust.devopsart.dev"
+
+languageCode = "en-us"
+DefaultContentLanguage = "en"
+title = "Klocust Documentation"
+theme = "docport"
+pygmentsCodeFences = true
+pygmentsStyle = "monokai"
+
+
+defaultContentLanguageInSubdir= false
+enableMissingTranslationPlaceholders = false
+
+
+[Languages]
+[Languages.en]
+title = "Documentation for Klocust"
+weight = 1
+languageName = "English"
+
+disableKinds = ["taxonomy", "taxonomyTerm", "category", "RSS"]
+
+[params]
+ordersectionsby = "weight" # ordersectionsby = "title"
+color_main = "#737373"
+#color_second = "#b30000"
+disableSearch = false # default is false
+disableNavChevron = false # set true to hide next/prev chevron, default is false
+menushortcutsnewtab = false # set true to open shortcuts links to a new tab/window
+
+editURL = "https://github.com/DevopsArtFactory/klocust.git"
+editWithNetlifyCMSURL = "admin/#/collections/pages/entries/"
+enableGitInfo = true
+
+[mediaTypes]
+  [mediaTypes."application/netlifyconfig"]
+    suffixes = ["yml"]
+
+[outputFormats]
+[outputFormats.netlifyyaml]
+mediaType = "application/netlifyconfig"
+isPlainText = true
+isHTML = false
+notAlternative = true
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[markup.goldmark.renderer]
+unsafe = true
+
+# Code highlight configuration
+[markup.highlight]
+codeFences = true
+guessSyntax = true
+hl_Lines = ""
+lineNoStart = 1
+lineNos = false
+lineNumbersInTable = true
+noClasses = true
+style = "monokai"
+tabWidth = 2
+
+#
+# top menu shotcuts
+#
+[[menu.shortcuts]]
+name = "Github"
+identifier = "ds"
+url = "https://github.com/DevopsArtFactory/klocust"
+weight = 10
+
+[[menu.shortcuts]]
+name = "Download"
+url = "/getting-start/installation/"
+weight = 11
+
+[[menu.shortcuts]]
+name = "Credits"
+url = "/docport-theme/credits/"
+weight = 30
