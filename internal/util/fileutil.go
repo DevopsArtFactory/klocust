@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func IsExistsFile(filename string) bool {
+func IsFileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
 		return false
@@ -15,8 +15,8 @@ func IsExistsFile(filename string) bool {
 	return !info.IsDir()
 }
 
-func DownloadFile(URL, fileName string) error {
-	response, err := http.Get(URL)
+func DownloadFile(url string, fileName string) error {
+	response, err := http.Get(url)
 	if err != nil {
 		return err
 	}
