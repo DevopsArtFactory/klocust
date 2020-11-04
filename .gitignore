@@ -1,10 +1,14 @@
-__pycache__
+.idea
+.vscode
 .DS_Store
+.envrc
+
+__pycache__
+
 *.swp
 *.yaml
 *-locustfile.py
-.idea
-.vscode
+
 build/
 manifest/
 out/
