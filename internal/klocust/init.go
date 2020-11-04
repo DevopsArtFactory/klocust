@@ -48,8 +48,7 @@ func createConfigFile(kLocustName string) (filename string, err error) {
 		return "", err
 	}
 
-	err = ioutil.WriteFile(filename, buf.Bytes(), 0644)
-	if err != nil {
+	if err = ioutil.WriteFile(filename, buf.Bytes(), 0644); err != nil {
 		return "", err
 	}
 
@@ -82,14 +81,6 @@ func InitLocust(namespace string, kLocustName string) error {
 		err error
 	)
 
-	if configFilename, err = createConfigFile(kLocustName); err != nil {
-		return err
-	}
-
-	if locustFilename, err = createLocustFile(kLocustName); err != nil {
-		return err
-	}
-
 	if namespace == "" {
 		namespace, err = kube.GetNamespaceFromCurrentContext()
 		if err != nil {
@@ -99,7 +90,6 @@ func InitLocust(namespace string, kLocustName string) error {
 
 	masterDeploymentName = getKLocustMasterDeploymentName(kLocustName)
 	isExist, err := kube.IsDeploymentExists(namespace, masterDeploymentName)
-
 	if err != nil {
 		return err
 	}
@@ -107,6 +97,14 @@ func InitLocust(namespace string, kLocustName string) error {
 	if isExist {
 		return errors.New(fmt.Sprintf("`%s` deployment is already exists in `%s` namespace.",
 			masterDeploymentName, namespace))
+	}
+
+	if configFilename, err = createConfigFile(kLocustName); err != nil {
+		return err
+	}
+
+	if locustFilename, err = createLocustFile(kLocustName); err != nil {
+		return err
 	}
 
 	fmt.Printf("\n%s has been successfully initialized!\n\n", kLocustName)
