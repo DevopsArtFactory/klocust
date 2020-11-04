@@ -3,24 +3,12 @@ package kube
 import (
 	"context"
 	v1 "k8s.io/api/apps/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-
 	. "k8s.io/apimachinery/pkg/api/errors"
+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func newClient() (kubernetes.Interface, error) {
-	kubeConfig, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
-	if err != nil {
-		return nil, err
-	}
-
-	return kubernetes.NewForConfig(kubeConfig)
-}
-
 func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
-	client, err := newClient()
+	client, err := NewClient()
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +22,7 @@ func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
 }
 
 func GetDeployments(namespace string) (*v1.DeploymentList, error) {
-	client, err := newClient()
+	client, err := NewClient()
 	if err != nil {
 		return nil, err
 	}
