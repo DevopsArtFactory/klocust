@@ -1,13 +1,13 @@
 package klocust
 
-func getKLocustMasterDeploymentName(kLocustName string) string {
-	return LocustMasterDeploymentPrefix + kLocustName
+func getLocustMasterDeploymentName(locustName string) string {
+	return LocustMasterDeploymentPrefix + locustName
 }
 
-func getLocustFilename(kLocustName string) string {
-	return kLocustName + LocustFileWithExtension
+func getLocustFilename(locustName string) string {
+	return locustName + LocustFileWithExtension
 }
 
-func getKLocustConfigFilename(kLocustName string) string {
-	return kLocustName + LocustConfigFileWithExtension
+func getLocustConfigFilename(locustName string) string {
+	return locustName + LocustConfigFileWithExtension
 }

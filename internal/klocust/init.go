@@ -26,15 +26,15 @@ type locustConfig struct {
 	}
 }
 
-func createConfigFile(kLocustName string) (filename string, err error) {
-	filename = getKLocustConfigFilename(kLocustName)
+func createConfigFile(locustName string) (filename string, err error) {
+	filename = getLocustConfigFilename(locustName)
 
 	if isExist := util.IsFileExists(filename); isExist {
 		return "", NewFileExistsError(filename)
 	}
 
 	L := locustConfig{}
-	L.Locust.Name = kLocustName
+	L.Locust.Name = locustName
 	L.Locust.Master.Cpu = LocustMasterDefaultCPU
 	L.Locust.Master.Memory = LocustMasterDefaultMemory
 	L.Locust.Worker.Count = LocustWorkerDefaultCount
@@ -57,8 +57,8 @@ func createConfigFile(kLocustName string) (filename string, err error) {
 	return filename, nil
 }
 
-func createLocustFile(kLocustName string) (filename string, err error) {
-	filename = getLocustFilename(kLocustName)
+func createLocustFile(locustName string) (filename string, err error) {
+	filename = getLocustFilename(locustName)
 
 	if isExist := util.IsFileExists(filename); isExist {
 		return "", NewFileExistsError(filename)
@@ -73,7 +73,7 @@ func createLocustFile(kLocustName string) (filename string, err error) {
 	return filename, nil
 }
 
-func InitLocust(namespace string, kLocustName string) error {
+func InitLocust(namespace string, locustName string) error {
 	var (
 		masterDeploymentName string
 		configFilename string
@@ -88,7 +88,7 @@ func InitLocust(namespace string, kLocustName string) error {
 		}
 	}
 
-	masterDeploymentName = getKLocustMasterDeploymentName(kLocustName)
+	masterDeploymentName = getLocustMasterDeploymentName(locustName)
 	isExist, err := kube.IsDeploymentExists(namespace, masterDeploymentName)
 	if err != nil {
 		return err
@@ -99,18 +99,18 @@ func InitLocust(namespace string, kLocustName string) error {
 			masterDeploymentName, namespace))
 	}
 
-	if configFilename, err = createConfigFile(kLocustName); err != nil {
+	if configFilename, err = createConfigFile(locustName); err != nil {
 		return err
 	}
 
-	if locustFilename, err = createLocustFile(kLocustName); err != nil {
+	if locustFilename, err = createLocustFile(locustName); err != nil {
 		return err
 	}
 
-	fmt.Printf("\n%s has been successfully initialized!\n\n", kLocustName)
+	fmt.Printf("\n%s has been successfully initialized!\n\n", locustName)
 	fmt.Printf("Please change %s and %s files.\n", configFilename, locustFilename)
 	fmt.Printf("And create locust cluster with next commands.\n\n")
-	fmt.Printf("$ klocust create %s -n %s\n", kLocustName, namespace)
+	fmt.Printf("$ klocust create %s -n %s\n", locustName, namespace)
 
 	return nil
 }

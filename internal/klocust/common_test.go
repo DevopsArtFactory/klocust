@@ -2,9 +2,9 @@ package klocust
 
 import "testing"
 
-func Test_getKLocustConfigFilename(t *testing.T) {
+func Test_getLocustConfigFilename(t *testing.T) {
 	type args struct {
-		kLocustName string
+		locustName string
 	}
 	tests := []struct {
 		name string
@@ -14,23 +14,23 @@ func Test_getKLocustConfigFilename(t *testing.T) {
 		{
 			name: "check return string",
 			args: args{
-				kLocustName: "hello",
+				locustName: "hello",
 			},
-			want: "hello-klocust.yaml",
+			want: "hello" + LocustConfigFileWithExtension,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getKLocustConfigFilename(tt.args.kLocustName); got != tt.want {
-				t.Errorf("getKLocustConfigFilename() = %v, want %v", got, tt.want)
+			if got := getLocustConfigFilename(tt.args.locustName); got != tt.want {
+				t.Errorf("getLocustConfigFilename() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_getKLocustMasterDeploymentName(t *testing.T) {
+func Test_getLocustMasterDeploymentName(t *testing.T) {
 	type args struct {
-		kLocustName string
+		locustName string
 	}
 	tests := []struct {
 		name string
@@ -40,15 +40,15 @@ func Test_getKLocustMasterDeploymentName(t *testing.T) {
 		{
 			name: "check return string",
 			args: args{
-				kLocustName: "hello",
+				locustName: "hello",
 			},
-			want: "locust-master-hello",
+			want: LocustMasterDeploymentPrefix + "hello",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getKLocustMasterDeploymentName(tt.args.kLocustName); got != tt.want {
-				t.Errorf("getKLocustMasterDeploymentName() = %v, want %v", got, tt.want)
+			if got := getLocustMasterDeploymentName(tt.args.locustName); got != tt.want {
+				t.Errorf("getLocustMasterDeploymentName() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -56,7 +56,7 @@ func Test_getKLocustMasterDeploymentName(t *testing.T) {
 
 func Test_getLocustFilename(t *testing.T) {
 	type args struct {
-		kLocustName string
+		locustName string
 	}
 	tests := []struct {
 		name string
@@ -66,14 +66,14 @@ func Test_getLocustFilename(t *testing.T) {
 		{
 			name: "check return string",
 			args: args{
-				kLocustName: "hello",
+				locustName: "hello",
 			},
-			want: "hello-locustfile.py",
+			want: "hello" + LocustFileWithExtension,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getLocustFilename(tt.args.kLocustName); got != tt.want {
+			if got := getLocustFilename(tt.args.locustName); got != tt.want {
 				t.Errorf("getLocustFilename() = %v, want %v", got, tt.want)
 			}
 		})

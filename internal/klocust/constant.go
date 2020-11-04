@@ -19,7 +19,7 @@ const LocustWorkerDefaultMemory = "512Mi"
 const LocustConfigFileWithExtension = "-klocust.yaml"
 const LocustFileWithExtension = "-locustfile.py"
 
-type KLocust struct {
+type Locust struct {
 	name             string
 	namespace        string
 	masterDeployment appsv1.Deployment

@@ -8,8 +8,8 @@ import (
 )
 
 func doInit(_ context.Context, _ io.Writer, _ *cobra.Command, args []string) error {
-	kLocustName := args[0]
-	return klocust.InitLocust(opts.Namespace, kLocustName)
+	locustName := args[0]
+	return klocust.InitLocust(opts.Namespace, locustName)
 }
 
 func NewInitCmd() *cobra.Command {
