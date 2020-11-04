@@ -3,7 +3,6 @@ package klocust
 
 import (
 	"context"
-	"github.com/DevopsArtFactory/klocust/cmd/builder"
 	"io"
 	"os"
 
@@ -43,7 +42,7 @@ func completion(_ context.Context, _ io.Writer, cmd *cobra.Command, args []strin
 
 // NewCmdCompletion returns the cobra command that outputs shell completion code
 func NewCmdCompletion() *cobra.Command {
-	return builder.NewCmd("completion").
+	return NewCmd("completion").
 		WithDescription("Output shell completion for the given shell (bash or zsh)").
 		ExactArgs(1, completion)
 }
