@@ -9,7 +9,6 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"github.com/DevopsArtFactory/klocust/internal/util"
 	"gopkg.in/yaml.v3"
-	. "k8s.io/apimachinery/pkg/api/errors"
 )
 
 type locustConfig struct {
@@ -27,27 +26,11 @@ type locustConfig struct {
 	}
 }
 
-func isExistLocustSet(namespace string, name string) (bool, error) {
-	deployment, err := kube.GetDeployment(namespace, name)
-	if err != nil {
-		if e, ok := err.(*StatusError); ok && e.ErrStatus.Code == 404 {
-			return false, nil
-		}
-		return false, err
-	}
-
-	if deployment != nil {
-		return true, nil
-	}
-
-	return false, nil
-}
-
 func createConfigFile(kLocustName string) (filename string, err error) {
-	filename = GetKLocustConfigFileName(kLocustName)
+	filename = getKLocustConfigFilename(kLocustName)
 
-	if isExist := util.IsExistsFile(filename); isExist {
-		return "", errors.New(fmt.Sprintf("`%s` file is already exists.", filename))
+	if isExist := util.IsFileExists(filename); isExist {
+		return "", NewFileExistsError(filename)
 	}
 
 	L := locustConfig{}
@@ -76,10 +59,10 @@ func createConfigFile(kLocustName string) (filename string, err error) {
 }
 
 func createLocustFile(kLocustName string) (filename string, err error) {
-	filename = GetLocustFileName(kLocustName)
+	filename = getLocustFilename(kLocustName)
 
-	if isExist := util.IsExistsFile(filename); isExist {
-		return "", errors.New(fmt.Sprintf("`%s` file is already exists.", filename))
+	if isExist := util.IsFileExists(filename); isExist {
+		return "", NewFileExistsError(filename)
 	}
 
 	if err := util.DownloadFile(DefaultLocustFileDownloadPath, filename); err != nil {
@@ -92,28 +75,11 @@ func createLocustFile(kLocustName string) (filename string, err error) {
 }
 
 func InitLocust(namespace string, kLocustName string) error {
-	if namespace == "" {
-		var err error
-		namespace, err = kube.GetNamespaceFromCurrentContext()
-		if err != nil {
-			return err
-		}
-	}
-
-	isExist, err := isExistLocustSet(namespace, LocustMasterDeploymentPrefix+kLocustName)
-
-	if err != nil {
-		return err
-	}
-
-	if isExist {
-		return errors.New(fmt.Sprintf("`%s%s` deployment is already exists in `%s` namespace.",
-			LocustMasterDeploymentPrefix, kLocustName, namespace))
-	}
-
 	var (
+		masterDeploymentName string
 		configFilename string
 		locustFilename string
+		err error
 	)
 
 	if configFilename, err = createConfigFile(kLocustName); err != nil {
@@ -122,6 +88,25 @@ func InitLocust(namespace string, kLocustName string) error {
 
 	if locustFilename, err = createLocustFile(kLocustName); err != nil {
 		return err
+	}
+
+	if namespace == "" {
+		namespace, err = kube.GetNamespaceFromCurrentContext()
+		if err != nil {
+			return err
+		}
+	}
+
+	masterDeploymentName = getKLocustMasterDeploymentName(kLocustName)
+	isExist, err := kube.IsDeploymentExists(namespace, masterDeploymentName)
+
+	if err != nil {
+		return err
+	}
+
+	if isExist {
+		return errors.New(fmt.Sprintf("`%s` deployment is already exists in `%s` namespace.",
+			masterDeploymentName, namespace))
 	}
 
 	fmt.Printf("\n%s has been successfully initialized!\n\n", kLocustName)

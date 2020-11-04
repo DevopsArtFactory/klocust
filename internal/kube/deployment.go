@@ -6,7 +6,18 @@ import (
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+
+	. "k8s.io/apimachinery/pkg/api/errors"
 )
+
+func newClient() (kubernetes.Interface, error) {
+	kubeConfig, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return kubernetes.NewForConfig(kubeConfig)
+}
 
 func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
 	client, err := newClient()
@@ -36,11 +47,18 @@ func GetDeployments(namespace string) (*v1.DeploymentList, error) {
 	return deployments, nil
 }
 
-func newClient() (kubernetes.Interface, error) {
-	kubeConfig, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
+func IsDeploymentExists(namespace string, name string) (bool, error) {
+	deployment, err := GetDeployment(namespace, name)
 	if err != nil {
-		return nil, err
+		if e, ok := err.(*StatusError); ok && e.ErrStatus.Code == 404 {
+			return false, nil
+		}
+		return false, err
 	}
 
-	return kubernetes.NewForConfig(kubeConfig)
+	if deployment != nil {
+		return true, nil
+	}
+
+	return false, nil
 }

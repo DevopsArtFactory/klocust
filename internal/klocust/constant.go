@@ -19,7 +19,7 @@ const LocustWorkerDefaultMemory = "512Mi"
 const LocustConfigFileWithExtension = "-klocust.yaml"
 const LocustFileWithExtension = "-locustfile.py"
 
-type locust struct {
+type KLocust struct {
 	name             string
 	namespace        string
 	masterDeployment appsv1.Deployment
@@ -29,11 +29,3 @@ type locust struct {
 }
 
 const DefaultLocustFileDownloadPath = "https://raw.githubusercontent.com/DevopsArtFactory/klocust/main/examples/default.locustfile.py"
-
-func GetLocustFileName(klocustName string) string {
-	return klocustName + LocustFileWithExtension
-}
-
-func GetKLocustConfigFileName(klocustName string) string {
-	return klocustName + LocustConfigFileWithExtension
-}

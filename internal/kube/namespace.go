@@ -10,5 +10,9 @@ func GetNamespaceFromCurrentContext() (string, error) {
 		return "", err
 	}
 
-	return clientCfg.Contexts[clientCfg.CurrentContext].Namespace, nil
+	if namespace := clientCfg.Contexts[clientCfg.CurrentContext].Namespace; namespace != "" {
+		return namespace, nil
+	}
+
+	return "default", nil
 }
