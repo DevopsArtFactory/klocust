@@ -46,11 +46,6 @@ $(BUILD_DIR)/$(PROJECT): $(GO_FILES) $(BUILD_DIR)
 	@echo
 	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=1 go build -tags $(GO_BUILD_TAGS_$(GOOS)) -ldflags $(GO_LDFLAGS_$(GOOS)) -o $@ $(BUILD_PACKAGE)
 
-# echo current target name
-define echo_target
-	@echo ">>> $@"
-endef
-
 # for make run with arguments
 ifeq (run,$(firstword $(MAKECMDGOALS)))
   RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -113,7 +108,6 @@ upload-only: version
 
 .PHONY: clean
 clean:
-	@$(echo_target)
 	rm -rf $(BUILD_DIR)
 
 .PHONY: linters
@@ -131,15 +125,12 @@ preview-docs:
 
 .PHONY: fmt
 fmt:
-	@$(echo_target)
 	@go fmt ./...
 
 .PHONY: test
 test:
-	@$(echo_target)
 	@ go test -count=1 -v -race -short -timeout=90s $(TEST_PACKAGES)
 
 .PHONY: run
 run:
-	@$(echo_target)
 	@go run ./cmd/main.go $(RUN_ARGS)
