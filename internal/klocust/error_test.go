@@ -16,7 +16,7 @@ func TestFileExistsError_Error(t *testing.T) {
 	}{
 		{
 			name: "check error messages",
-			fields: fields {
+			fields: fields{
 				Filename: "test_file.txt",
 			},
 			want: "`test_file.txt` file is already exists.",
@@ -45,7 +45,7 @@ func TestNewFileExistsError(t *testing.T) {
 	}{
 		{
 			name: "create new error",
-			args: args {
+			args: args{
 				filename: "test_file.txt",
 			},
 			want: FileExistsError{

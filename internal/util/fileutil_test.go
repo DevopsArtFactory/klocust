@@ -13,12 +13,12 @@ func TestIsFileExists(t *testing.T) {
 	}{
 		{
 			name: "with exist file",
-			args: args { filename: "fileutil_test.go"},
+			args: args{ filename: "fileutil_test.go"},
 			want: true,
 		},
 		{
 			name: "with not exist file",
-			args: args { filename: "not_exist_file.txt"},
+			args: args{ filename: "not_exist_file.txt"},
 			want: false,
 		},
 	}

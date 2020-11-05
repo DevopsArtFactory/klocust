@@ -30,8 +30,7 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 func PrintLocustDeployments(namespace string) error {
 	if namespace == "" {
 		var err error
-		namespace, err = kube.GetNamespaceFromCurrentContext()
-		if err != nil {
+		if namespace, err = kube.GetNamespaceFromCurrentContext(); err != nil {
 			return err
 		}
 	}

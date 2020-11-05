@@ -82,8 +82,7 @@ func InitLocust(namespace string, locustName string) error {
 	)
 
 	if namespace == "" {
-		namespace, err = kube.GetNamespaceFromCurrentContext()
-		if err != nil {
+		if namespace, err = kube.GetNamespaceFromCurrentContext(); err != nil {
 			return err
 		}
 	}
