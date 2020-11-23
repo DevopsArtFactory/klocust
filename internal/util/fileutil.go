@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"k8s.io/klog/v2"
 )
 
 func IsFileExists(filename string) bool {
@@ -67,7 +69,7 @@ func DownloadFile(url string, dstPath string) error {
 
 func PrintFile(filename string, isPrintFilename bool) error {
 	if isPrintFilename {
-		fmt.Printf("> Filename: %s\n", filename)
+		klog.Infof("> Filename: %s\n", filename)
 	}
 
 	file, err := os.Open(filename)

@@ -1,14 +1,15 @@
 package klocust
 
 import (
-	"fmt"
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/olekukonko/tablewriter"
-	v1 "k8s.io/api/apps/v1"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/olekukonko/tablewriter"
+	v1 "k8s.io/api/apps/v1"
+	"k8s.io/klog/v2"
 )
 
 func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
@@ -37,7 +38,7 @@ func PrintLocustDeployments(namespace string) error {
 		return err
 	}
 
-	fmt.Printf(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
+	klog.Infof(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
 		len(locustDeployments), namespace, locustMasterDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {

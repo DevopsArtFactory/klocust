@@ -2,11 +2,12 @@ package klocust
 
 import (
 	"errors"
-	"github.com/DevopsArtFactory/klocust/internal/schemas"
-
 	"fmt"
+
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
+	"k8s.io/klog/v2"
 )
 
 func downloadDefaultTemplates() error {
@@ -19,13 +20,13 @@ func downloadDefaultTemplates() error {
 		dstPath := getLocustHomeTemplatesPath(filename)
 
 		if isExist := util.IsFileExists(dstPath); isExist {
-			fmt.Printf("%s file exists already.\n", dstPath)
+			klog.Errorf("%s file exists already.\n", dstPath)
 		}
 
 		if err := util.DownloadFile(srcPath, dstPath); err != nil {
 			return errors.New(fmt.Sprintf("Download Failed %s to %s: %v", srcPath, dstPath, err))
 		}
-		fmt.Printf("✓ %s file has downloaded.\n", dstPath)
+		klog.Infof("✓ %s file has downloaded.\n", dstPath)
 	}
 
 	return nil
@@ -89,10 +90,10 @@ func InitLocust(namespace string, locustName string) error {
 		return err
 	}
 
-	fmt.Printf("\n✓ %s has been successfully initialized!\n", locustName)
-	fmt.Printf("Please change `%s` and `%s` files.\n", configFilename, locustFilename)
-	fmt.Printf("And create locust cluster with next commands.\n\n")
-	fmt.Printf("$ klocust apply %s -n %s\n", locustName, namespace)
+	klog.Infof("\n✓ %s has been successfully initialized!\n", locustName)
+	klog.Infof("Please change `%s` and `%s` files.\n", configFilename, locustFilename)
+	klog.Infof("And create locust cluster with next commands.\n\n")
+	klog.Infof("$ klocust apply %s -n %s\n", locustName, namespace)
 
 	return nil
 }

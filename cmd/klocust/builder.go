@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/klog/v2"
 )
 
 // Builder is used to build cobra commands.
@@ -96,7 +97,7 @@ func handleWellKnownErrors(err error) error {
 	}
 
 	if errors.IsUnauthorized(err) {
-		fmt.Println("Please check your kubeconfig:", err)
+		klog.Errorf("Please check your kubeconfig: %v", err)
 		return nil
 	}
 
