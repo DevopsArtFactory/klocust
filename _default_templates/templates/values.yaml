@@ -1,0 +1,60 @@
+# {{.LocustName}}-klocust.yaml kloucst config file
+namespace: {{ .Namespace }}
+locustName: {{ .LocustName }}
+
+master:
+  requests:
+    cpu: {{ .Master.Requests.CPU | default "250m" }}
+    memory: {{ .Master.Requests.Memory | default "512Mi" }}
+  limits:
+    cpu: {{ .Master.Limits.CPU | default "250m" }}
+    memory: {{ .Master.Limits.Memory | default "512Mi" }}
+  nodeSelector: {}
+#   env: dev
+#   app: locust
+  tolerations: []
+#   - key: "example-key"
+#     operator: "Exists"
+#     effect: "NoSchedule"
+  affinity: {}
+  labels: {}
+  annotations: {}
+
+worker:
+  count: {{ .Worker.Count | default 1 }}
+  requests:
+    cpu: {{ .Worker.Requests.CPU | default "250m" }}
+    memory: {{ .Worker.Requests.Memory | default "512Mi" }}
+  limits:
+    cpu: {{ .Worker.Limits.CPU | default "250m" }}
+    memory: {{ .Worker.Limits.Memory | default "512Mi" }}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  labels: {}
+  annotations: {}
+
+service:
+  port: 8089
+  labels: {}
+{{- if .Service.EnableFargate }}
+  annotations:
+  # For EKS on Fargate
+    alb.ingress.kubernetes.io/target-type: ip
+{{- else }}
+  annotations: {}
+{{ end }}
+
+{{- if .Ingress.Class }}
+ingress:
+  class: {{ .Ingress.Class }}
+  host: locust-{{ .LocustName }}.{{ .Ingress.Host }}
+  {{- if eq .Ingress.Class "alb" }}
+  alb:
+    scheme: {{ .Ingress.ALB.Scheme | default "internal" }}
+    securityGroups: {{ .Ingress.ALB.SecurityGroups }}
+    certificateARN: {{ .Ingress.ALB.CertificateARN }}
+  labels: {}
+  annotations: {}
+  {{- end }}
+{{ end }}

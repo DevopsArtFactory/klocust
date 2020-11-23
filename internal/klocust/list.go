@@ -19,7 +19,7 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 
 	var locustDeployments = make([]v1.Deployment, 0)
 	for _, deployment := range deployments.Items {
-		if strings.HasPrefix(deployment.Name, LocustMasterDeploymentPrefix) {
+		if strings.HasPrefix(deployment.Name, locustMasterDeploymentPrefix) {
 			locustDeployments = append(locustDeployments, deployment)
 		}
 	}
@@ -28,11 +28,8 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 }
 
 func PrintLocustDeployments(namespace string) error {
-	if namespace == "" {
-		var err error
-		if namespace, err = kube.GetNamespaceFromCurrentContext(); err != nil {
-			return err
-		}
+	if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
+		return err
 	}
 
 	locustDeployments, err := getLocustDeployments(namespace)
@@ -41,7 +38,7 @@ func PrintLocustDeployments(namespace string) error {
 	}
 
 	fmt.Printf(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
-		len(locustDeployments), namespace, LocustMasterDeploymentPrefix)
+		len(locustDeployments), namespace, locustMasterDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {
 		return nil
@@ -53,7 +50,7 @@ func PrintLocustDeployments(namespace string) error {
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, d := range locustDeployments {
-		name := d.Name[len(LocustMasterDeploymentPrefix):]
+		name := d.Name[len(locustMasterDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
 
 		table.Append([]string{

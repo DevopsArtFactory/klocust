@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-worker-{{ .LocustName }}
+  labels:
+    name: locust-worker-{{ .LocustName }}
+{{- with .Worker.Annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  replicas: {{ .Worker.Count }}
+  selector:
+    matchLabels:
+      app: locust-worker-{{ .LocustName }}
+  template:
+    metadata:
+      labels:
+        app: locust-worker-{{ .LocustName }}
+{{- with .Worker.Labels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+     spec:
+{{- with .Worker.NodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Worker.Tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Worker.Affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+{{- end }}
+      containers:
+        - name: locust-worker
+          image: locustio/locust:latest
+          resources:
+            requests:
+              cpu: {{ .Worker.Requests.CPU }}
+              memory: {{ .Worker.Requests.Memory }}
+            limits:
+              cpu: {{ .Worker.Limits.CPU }}
+              memory: {{ .Worker.Limits.Memory }}
+          args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--worker", "--master-host", "locust-master-{{ .LocustName }}"]
+          volumeMounts:
+            - mountPath: /mnt/locust/
+              name: locust-scripts
+          env:
+            - name: LOCUST_MODE
+              value: worker
+            - name: LOCUST_MASTER
+              value: locust-master-{{ .LocustName }}
+      volumes:
+        - name: locust-scripts
+          configMap:
+            name: locust-cm-{{ .LocustName }}

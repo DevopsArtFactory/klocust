@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-master-{{ .LocustName }}
+  labels:
+    name: locust-master-{{ .LocustName }}
+{{- with .Master.Annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust-master-{{ .LocustName }}
+  template:
+    metadata:
+      labels:
+        app: locust-master-{{ .LocustName }}
+{{- with .Master.Labels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+{{- with .Master.NodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Master.Tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+{{- with .Master.Affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+{{- end }}
+      containers:
+        - name: locust-master
+          image: locustio/locust:latest
+          args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--master"]
+          resources:
+            requests:
+              cpu: {{ .Master.Requests.CPU }}
+              memory: {{ .Master.Requests.Memory }}
+            limits:
+              cpu: {{ .Master.Limits.CPU }}
+              memory: {{ .Master.Limits.Memory }}
+          volumeMounts:
+            - mountPath: /mnt/locust/
+              name: locust-scripts
+          env:
+            - name: LOCUST_MODE
+              value: master
+            - name: TARGET_HOST
+              value: https://www.example.com
+          ports:
+            - name: loc-master-web
+              containerPort: 8089
+              protocol: TCP
+            - name: loc-master-p1
+              containerPort: 5557
+              protocol: TCP
+            - name: loc-master-p2
+              containerPort: 5558
+              protocol: TCP
+          livenessProbe:
+            periodSeconds: 30
+            httpGet:
+              path: /
+              port: 8089
+          readinessProbe:
+            periodSeconds: 30
+            httpGet:
+              path: /
+              port: 8089
+      volumes:
+        - name: locust-scripts
+          configMap:
+            name: locust-cm-{{ .LocustName }}

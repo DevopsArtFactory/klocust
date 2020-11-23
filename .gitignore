@@ -2,11 +2,12 @@
 .vscode
 .DS_Store
 .envrc
+.klocust
 
 __pycache__
 
 *.swp
-*.yaml
+*-klocust.yaml
 *-locustfile.py
 
 build/
