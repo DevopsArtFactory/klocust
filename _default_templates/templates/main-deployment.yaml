@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: locust-master-{{ .LocustName }}
+  name: locust-main-{{ .LocustName }}
   labels:
-    name: locust-master-{{ .LocustName }}
-{{- with .Master.Annotations }}
+    name: locust-main-{{ .LocustName }}
+{{- with .Main.Annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
@@ -12,38 +12,38 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: locust-master-{{ .LocustName }}
+      app: locust-main-{{ .LocustName }}
   template:
     metadata:
       labels:
-        app: locust-master-{{ .LocustName }}
-{{- with .Master.Labels }}
+        app: locust-main-{{ .LocustName }}
+{{- with .Main.Labels }}
 {{ toYaml . | indent 8 }}
 {{- end }}
     spec:
-{{- with .Master.NodeSelector }}
+{{- with .Main.NodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- with .Master.Tolerations }}
+{{- with .Main.Tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- with .Master.Affinity }}
+{{- with .Main.Affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
 {{- end }}
       containers:
-        - name: locust-master
+        - name: locust-main
           image: locustio/locust:latest
           args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--master"]
           resources:
             requests:
-              cpu: {{ .Master.Requests.CPU }}
-              memory: {{ .Master.Requests.Memory }}
+              cpu: {{ .Main.Requests.CPU }}
+              memory: {{ .Main.Requests.Memory }}
             limits:
-              cpu: {{ .Master.Limits.CPU }}
-              memory: {{ .Master.Limits.Memory }}
+              cpu: {{ .Main.Limits.CPU }}
+              memory: {{ .Main.Limits.Memory }}
           volumeMounts:
             - mountPath: /mnt/locust/
               name: locust-scripts
@@ -53,13 +53,13 @@ spec:
             - name: TARGET_HOST
               value: https://www.example.com
           ports:
-            - name: loc-master-web
+            - name: loc-main-web
               containerPort: 8089
               protocol: TCP
-            - name: loc-master-p1
+            - name: loc-main-p1
               containerPort: 5557
               protocol: TCP
-            - name: loc-master-p2
+            - name: loc-main-p2
               containerPort: 5558
               protocol: TCP
           livenessProbe:

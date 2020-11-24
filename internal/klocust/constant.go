@@ -13,7 +13,7 @@ import (
 type Locust struct {
 	name             string
 	namespace        string
-	masterDeployment appsv1.Deployment
+	mainDeployment   appsv1.Deployment
 	workerDeployment appsv1.Deployment
 	ingress          v1beta1.Ingress
 	service          v1.Service
@@ -28,14 +28,14 @@ var (
 const (
 	locustlProjectDir                   = "./.klocust"
 	locustProjectDefaultTemplatesDir    = locustlProjectDir + "/_default_templates"
-	locustMasterDeploymentPrefix        = "locust-master-"
+	locustMainDeploymentPrefix        = "locust-main-"
 	locustConfigFileSuffixWithExtension = "-klocust.yaml"
 	locustFileSuffixWithExtension       = "-locustfile.py"
 
 	locustFilename           = "locustfile.py"
-	ingressFilename          = "master-ingress.yaml"
-	serviceFilename          = "master-service.yaml"
-	masterDeploymentFilename = "master-deployment.yaml"
+	ingressFilename          = "main-ingress.yaml"
+	serviceFilename          = "main-service.yaml"
+	mainDeploymentFilename   = "main-deployment.yaml"
 	workerDeploymentFilename = "worker-deployment.yaml"
 	valuesFilename           = "values.yaml"
 
@@ -48,7 +48,7 @@ var locustFilenames = []string{
 	locustFilename,
 	ingressFilename,
 	serviceFilename,
-	masterDeploymentFilename,
+	mainDeploymentFilename,
 	workerDeploymentFilename,
 	valuesFilename,
 }
@@ -92,6 +92,6 @@ func getLocustFilename(locustName string) string {
 	return locustName + locustFileSuffixWithExtension
 }
 
-func getLocustMasterDeploymentName(locustName string) string {
-	return locustMasterDeploymentPrefix + locustName
+func getLocustMainDeploymentName(locustName string) string {
+	return locustMainDeploymentPrefix + locustName
 }

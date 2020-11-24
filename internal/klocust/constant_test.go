@@ -2,7 +2,7 @@ package klocust
 
 import "testing"
 
-func Test_getLocustMasterDeploymentName(t *testing.T) {
+func Test_getLocustMainDeploymentName(t *testing.T) {
 	type args struct {
 		locustName string
 	}
@@ -16,13 +16,13 @@ func Test_getLocustMasterDeploymentName(t *testing.T) {
 			args: args{
 				locustName: "hello",
 			},
-			want: locustMasterDeploymentPrefix + "hello",
+			want: locustMainDeploymentPrefix + "hello",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getLocustMasterDeploymentName(tt.args.locustName); got != tt.want {
-				t.Errorf("getLocustMasterDeploymentName() = %v, want %v", got, tt.want)
+			if got := getLocustMainDeploymentName(tt.args.locustName); got != tt.want {
+				t.Errorf("getLocustMainDeploymentName() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -51,7 +51,7 @@ spec:
             - name: LOCUST_MODE
               value: worker
             - name: LOCUST_MASTER
-              value: locust-master-{{ .LocustName }}
+              value: locust-main-{{ .LocustName }}
       volumes:
         - name: locust-scripts
           configMap:

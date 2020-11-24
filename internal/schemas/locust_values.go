@@ -8,39 +8,39 @@ type LocustValues struct {
 	// Name of locust cluster
 	LocustName string `yaml:"locustName"`
 
-	// Loucst Master Node
-	Master struct {
-		// Resource Requests of Master Node
+	// Loucst Main Node
+	Main struct {
+		// Resource Requests of Main Node
 		Requests struct {
-			// Request of Master Node CPU
+			// Request of Main Node CPU
 			CPU string `yaml:"cpu"`
-			// Request of Master Node Memory
+			// Request of Main Node Memory
 			Memory string `yaml:"memory"`
 		}
 
-		// Resource Limit of Master Node
+		// Resource Limit of Main Node
 		Limits struct {
-			// Limit of Master Node CPU
+			// Limit of Main Node CPU
 			CPU string `yaml:"cpu"`
-			// Limit of Master Node Memory
+			// Limit of Main Node Memory
 			Memory string `yaml:"memory"`
 		}
 
-		// NodeSelector of Master Node
+		// NodeSelector of Main Node
 		NodeSelector map[string]string `yaml:"nodeSelector"`
 
-		// Tolerations of Master Node
+		// Tolerations of Main Node
 		Tolerations []map[string]string `yaml:"tolerations"`
 
-		// Affinity of Master Node
+		// Affinity of Main Node
 		Affinity map[string]string `yaml:"affinity"`
 
-		// Lables of Master Node
+		// Lables of Main Node
 		Labels map[string]string `yaml:"labels"`
 
-		// Annotations of Master Node
+		// Annotations of Main Node
 		Annotations map[string]string `yaml:"annotations"`
-	} `yaml:"master"`
+	} `yaml:"main"`
 
 	// Locust Worker Node
 	Worker struct {
@@ -51,7 +51,7 @@ type LocustValues struct {
 		Requests struct {
 			// Request of Worker Node CPU
 			CPU string `yaml:"cpu"`
-			// Request of Master Node Memory
+			// Request of Main Node Memory
 			Memory string `yaml:"memory"`
 		}
 		// Resource Limits of Worker Node
@@ -78,28 +78,28 @@ type LocustValues struct {
 		Annotations map[string]string `yaml:"annotations"`
 	} `yaml:"worker"`
 
-	// Locust Master Service
+	// Locust Main Service
 	Service struct {
-		// Port of Master Service
+		// Port of Main Service
 		Port int `yaml:"port"`
 
-		// Lables of Master Service
+		// Lables of Main Service
 		Labels map[string]string `yaml:"labels"`
 
-		// Annotations of Master Service
+		// Annotations of Main Service
 		Annotations map[string]string `yaml:"annotations"`
 
 		// True if using EKS on Fargate
 		EnableFargate bool `yaml:"enableFargate"`
 	} `yaml:"service"`
 
-	// Locust Master Ingress
+	// Locust Main Ingress
 	Ingress struct {
 
-		// Class of Master Ingress (alb/nginx)
+		// Class of Main Ingress (alb/nginx)
 		Class string `yaml:"class"`
 
-		// host of Master Ingress (ex) locust-hello.example.com)
+		// host of Main Ingress (ex) locust-hello.example.com)
 		Host string `yaml:"host"`
 
 		// ALB Ingress controller (if Class = 'alb')
@@ -112,10 +112,10 @@ type LocustValues struct {
 			CertificateARN string `yaml:"cetificateARN"`
 		} `yaml:"alb"`
 
-		// Labels of Master Ingress
+		// Labels of Main Ingress
 		Labels map[string]string `yaml:"labels"`
 
-		// Annotations of Master Ingress
+		// Annotations of Main Ingress
 		Annotations map[string]string `yaml:"annotations"`
 	} `yaml:"ingress"`
 }

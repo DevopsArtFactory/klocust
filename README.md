@@ -26,11 +26,11 @@ echo 'source <(kubectl completion zsh)' >>~/.zsh
 ```bash
 $ klocust list
 
->>> 1 locust deployments in loadtest namespace. (PREFIX: locust-master-)
+>>> 1 locust deployments in loadtest namespace. (PREFIX: locust-main-)
 +-------+---------------------+-------+------------+-----------+------+
 | NAME  | DEPLOYMENT          | READY | UP-TO-DATE | AVAILABLE | AGE  |
 +-------+---------------------+-------+------------+-----------+------+
-| hello | locust-master-hello | 1/1   | 1          | 1         | 9m5s |
+| hello | locust-main-hello | 1/1   | 1          | 1         | 9m5s |
 +-------+---------------------+-------+------------+-----------+------+
 ```
 
