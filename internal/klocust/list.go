@@ -1,14 +1,15 @@
 package klocust
 
 import (
-	"fmt"
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/olekukonko/tablewriter"
-	v1 "k8s.io/api/apps/v1"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/olekukonko/tablewriter"
+	v1 "k8s.io/api/apps/v1"
+	"k8s.io/klog/v2"
 )
 
 func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
@@ -19,7 +20,7 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 
 	var locustDeployments = make([]v1.Deployment, 0)
 	for _, deployment := range deployments.Items {
-		if strings.HasPrefix(deployment.Name, LocustMasterDeploymentPrefix) {
+		if strings.HasPrefix(deployment.Name, locustMasterDeploymentPrefix) {
 			locustDeployments = append(locustDeployments, deployment)
 		}
 	}
@@ -28,12 +29,8 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 }
 
 func PrintLocustDeployments(namespace string) error {
-	if namespace == "" {
-		var err error
-		namespace, err = kube.GetNamespaceFromCurrentContext()
-		if err != nil {
-			return err
-		}
+	if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
+		return err
 	}
 
 	locustDeployments, err := getLocustDeployments(namespace)
@@ -41,8 +38,8 @@ func PrintLocustDeployments(namespace string) error {
 		return err
 	}
 
-	fmt.Printf(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
-		len(locustDeployments), namespace, LocustMasterDeploymentPrefix)
+	klog.Infof(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
+		len(locustDeployments), namespace, locustMasterDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {
 		return nil
@@ -54,7 +51,7 @@ func PrintLocustDeployments(namespace string) error {
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, d := range locustDeployments {
-		name := d.Name[len(LocustMasterDeploymentPrefix):]
+		name := d.Name[len(locustMasterDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
 
 		table.Append([]string{

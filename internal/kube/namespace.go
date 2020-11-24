@@ -16,3 +16,13 @@ func GetNamespaceFromCurrentContext() (string, error) {
 
 	return "default", nil
 }
+
+func SetCurrentNamespaceIfBlank(namespace *string) (string, error) {
+	if *namespace == "" {
+		var err error
+		if *namespace, err = GetNamespaceFromCurrentContext(); err != nil {
+			return "", err
+		}
+	}
+	return *namespace, nil
+}

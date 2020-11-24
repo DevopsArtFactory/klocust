@@ -131,6 +131,10 @@ fmt:
 test:
 	@ go test -count=1 -v -race -short -timeout=90s $(TEST_PACKAGES)
 
+.PHONY: cover
+cover:
+	@ go test -cover -count=1 -v -race -short -timeout=90s $(TEST_PACKAGES)
+
 .PHONY: run
 run:
 	@go run ./cmd/main.go $(RUN_ARGS)

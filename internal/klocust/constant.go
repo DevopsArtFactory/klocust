@@ -1,25 +1,16 @@
 package klocust
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
-
 	"k8s.io/api/extensions/v1beta1"
 )
 
-const LocustMasterDeploymentPrefix = "locust-master-"
-
-const LocustMasterDefaultCPU = "250m"
-const LocustMasterDefaultMemory = "512Mi"
-
-const LocustWorkerDefaultCount = 1
-const LocustWorkerDefaultCPU = "250m"
-const LocustWorkerDefaultMemory = "512Mi"
-
-const LocustConfigFileWithExtension = "-klocust.yaml"
-const LocustFileWithExtension = "-locustfile.py"
-
-type KLocust struct {
+type Locust struct {
 	name             string
 	namespace        string
 	masterDeployment appsv1.Deployment
@@ -28,4 +19,79 @@ type KLocust struct {
 	service          v1.Service
 }
 
-const DefaultLocustFileDownloadPath = "https://raw.githubusercontent.com/DevopsArtFactory/klocust/main/examples/default.locustfile.py"
+var (
+	userHomeDir, _                = os.UserHomeDir()
+	locustHomeDir                 = userHomeDir + "/.klocust"
+	locustHomeDefaultTemplatesDir = locustHomeDir + "/_default_templates"
+)
+
+const (
+	locustlProjectDir                   = "./.klocust"
+	locustProjectDefaultTemplatesDir    = locustlProjectDir + "/_default_templates"
+	locustMasterDeploymentPrefix        = "locust-master-"
+	locustConfigFileSuffixWithExtension = "-klocust.yaml"
+	locustFileSuffixWithExtension       = "-locustfile.py"
+
+	locustFilename           = "locustfile.py"
+	ingressFilename          = "master-ingress.yaml"
+	serviceFilename          = "master-service.yaml"
+	masterDeploymentFilename = "master-deployment.yaml"
+	workerDeploymentFilename = "worker-deployment.yaml"
+	valuesFilename           = "values.yaml"
+
+	locustGitRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
+
+	DEFAULT_BUFFER_SIZE int64 = 1024
+)
+
+var locustFilenames = []string{
+	locustFilename,
+	ingressFilename,
+	serviceFilename,
+	masterDeploymentFilename,
+	workerDeploymentFilename,
+	valuesFilename,
+}
+
+func getLocustGitRepoTemplatePath(filename string) string {
+	subDir := "main/_default_templates/tmpl"
+	if strings.HasSuffix(filename, ".py") {
+		subDir = "main/_default_templates/tasks"
+	}
+	return fmt.Sprintf("%s/%s/%s", locustGitRepo, subDir, filename)
+}
+
+func getLocustHomeTemplatesPath(filename string) string {
+	subDir := "templates"
+	if strings.HasSuffix(filename, ".py") {
+		subDir = "tasks"
+	}
+	return fmt.Sprintf("%s/%s/%s", locustHomeDefaultTemplatesDir, subDir, filename)
+}
+
+func getLocustProjectTemplatesPath(filename string) string {
+	subDir := "templates"
+	if strings.HasSuffix(filename, ".py") {
+		subDir = "tasks"
+	}
+	return fmt.Sprintf("%s/%s/%s", locustProjectDefaultTemplatesDir, subDir, filename)
+}
+
+func getLocustProjectDir(locustName string) string {
+	return fmt.Sprintf("%s/%s", locustlProjectDir, locustName)
+}
+
+func getLocustProjectPath(locustName string, filename string) string {
+	return fmt.Sprintf("%s/%s", getLocustProjectDir(locustName), filename)
+}
+
+func getLocustConfigFilename(locustName string) string {
+	return locustName + locustConfigFileSuffixWithExtension
+}
+func getLocustFilename(locustName string) string {
+	return locustName + locustFileSuffixWithExtension
+}
+
+func getLocustMasterDeploymentName(locustName string) string {
+	return locustMasterDeploymentPrefix + locustName
+}
