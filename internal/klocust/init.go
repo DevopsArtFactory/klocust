@@ -70,11 +70,11 @@ func InitLocust(namespace string, locustName string) error {
 		return err
 	}
 
-	masterDeploymentName := getLocustMasterDeploymentName(locustName)
-	if isExist, err := kube.IsDeploymentExists(namespace, masterDeploymentName); isExist || err != nil {
+	mainDeploymentName := getLocustMainDeploymentName(locustName)
+	if isExist, err := kube.IsDeploymentExists(namespace, mainDeploymentName); isExist || err != nil {
 		if isExist {
 			return errors.New(fmt.Sprintf("`%s` deployment is already exists in `%s` namespace.",
-				masterDeploymentName, namespace))
+				mainDeploymentName, namespace))
 		}
 		return err
 	}

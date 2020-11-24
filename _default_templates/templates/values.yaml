@@ -2,13 +2,13 @@
 namespace: {{ .Namespace }}
 locustName: {{ .LocustName }}
 
-master:
+main:
   requests:
-    cpu: {{ .Master.Requests.CPU | default "250m" }}
-    memory: {{ .Master.Requests.Memory | default "512Mi" }}
+    cpu: {{ .Main.Requests.CPU | default "250m" }}
+    memory: {{ .Main.Requests.Memory | default "512Mi" }}
   limits:
-    cpu: {{ .Master.Limits.CPU | default "250m" }}
-    memory: {{ .Master.Limits.Memory | default "512Mi" }}
+    cpu: {{ .Main.Limits.CPU | default "250m" }}
+    memory: {{ .Main.Limits.Memory | default "512Mi" }}
   nodeSelector: {}
 #   env: dev
 #   app: locust

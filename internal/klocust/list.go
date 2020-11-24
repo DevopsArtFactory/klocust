@@ -20,7 +20,7 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 
 	var locustDeployments = make([]v1.Deployment, 0)
 	for _, deployment := range deployments.Items {
-		if strings.HasPrefix(deployment.Name, locustMasterDeploymentPrefix) {
+		if strings.HasPrefix(deployment.Name, locustMainDeploymentPrefix) {
 			locustDeployments = append(locustDeployments, deployment)
 		}
 	}
@@ -39,7 +39,7 @@ func PrintLocustDeployments(namespace string) error {
 	}
 
 	klog.Infof(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
-		len(locustDeployments), namespace, locustMasterDeploymentPrefix)
+		len(locustDeployments), namespace, locustMainDeploymentPrefix)
 
 	if len(locustDeployments) <= 0 {
 		return nil
@@ -51,7 +51,7 @@ func PrintLocustDeployments(namespace string) error {
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	for _, d := range locustDeployments {
-		name := d.Name[len(locustMasterDeploymentPrefix):]
+		name := d.Name[len(locustMainDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
 
 		table.Append([]string{

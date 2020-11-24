@@ -1,31 +1,31 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: locust-master-{{ .LocustName }}
+  name: locust-main-{{ .LocustName }}
 {{- with .Service.Annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
   labels:
-    app: locust-master-{{ .LocustName }}
-    role: master
+    app: locust-main-{{ .LocustName }}
+    role: main
 {{- with .Service.Labels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
   ports:
     - port: {{ .Service.Port }}
-      targetPort: loc-master-web
+      targetPort: loc-main-web
       protocol: TCP
-      name: loc-master-web
+      name: loc-main-web
     - port: 5557
-      targetPort: loc-master-p1
+      targetPort: loc-main-p1
       protocol: TCP
-      name: loc-master-p1
+      name: loc-main-p1
     - port: 5558
-      targetPort: loc-master-p2
+      targetPort: loc-main-p2
       protocol: TCP
-      name: loc-master-p2
+      name: loc-main-p2
   selector:
-    app: locust-master-{{ .LocustName }}
+    app: locust-main-{{ .LocustName }}
   type: NodePort

@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: locust-master-{{ .LocustName }}
+  name: locust-main-{{ .LocustName }}
   annotations:
     {{- if eq .Ingress.Class "alb" }}
       kubernetes.io/ingress.class: alb
@@ -26,7 +26,7 @@ metadata:
 {{ toYaml . | indent 6 }}
 {{- end }}
   labels:
-    app: locust-master-{{.LocustName}}
+    app: locust-main-{{.LocustName}}
 {{- with .Ingress.Labels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
@@ -37,6 +37,6 @@ spec:
         paths:
           - path: /*
             backend:
-              serviceName: locust-master-{{ .LocustName }}
+              serviceName: locust-main-{{ .LocustName }}
               servicePort: {{ .Service.Port }}
 {{- end }}
