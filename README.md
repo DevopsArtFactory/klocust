@@ -60,7 +60,7 @@ $ locust -f hello-locustfile.py
 ```bash
 $ klocust apply hello
 or
-$ klocust apply -cf hello-klocust.yaml -lf hello-locustfile.yaml
+$ klocust apply hello -cf hello-klocust.yaml -lf hello-locustfile.yaml
 ```
 
 ### klocust delete (TODO)

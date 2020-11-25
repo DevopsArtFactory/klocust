@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"k8s.io/klog/v2"
 )
@@ -45,6 +46,11 @@ func DownloadFile(url string, dstPath string) error {
 	defer func() {
 		err = response.Body.Close()
 	}()
+
+	dir := filepath.Dir(dstPath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
 
 	if response.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("status code %v", response.StatusCode))

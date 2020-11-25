@@ -33,11 +33,6 @@ func downloadDefaultTemplates() error {
 }
 
 func createLocustProject(namespace string, locustName string) (string, string, error) {
-	projectDir := getLocustProjectDir(locustName)
-	if err := util.CreateDir(projectDir); err != nil {
-		return "", "", err
-	}
-
 	// Create ./{locustName}-values.yaml file
 	var values schemas.LocustValues
 	values.Namespace = namespace

@@ -19,6 +19,7 @@ var rootCmd = NewCmd("klocust").
 func init() {
 	rootCmd.AddCommand(NewCmdList())
 	rootCmd.AddCommand(NewInitCmd())
+	rootCmd.AddCommand(NewApplyCMD())
 	rootCmd.AddCommand(NewCmdCompletion())
 }
 
