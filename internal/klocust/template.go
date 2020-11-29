@@ -2,10 +2,11 @@ package klocust
 
 import (
 	"gopkg.in/yaml.v2"
-	"html/template"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
@@ -18,7 +19,7 @@ func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value sc
 	}
 
 	t := template.Must(
-		template.New("values.yaml").Funcs(sprig.FuncMap()).ParseFiles(valuesTemplatePath))
+		template.New("values.yaml").Funcs(sprig.TxtFuncMap()).ParseFiles(valuesTemplatePath))
 
 	f, err := os.Create(valuesFilePath)
 	if err != nil {
@@ -32,6 +33,14 @@ func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value sc
 	return valuesFilePath, nil
 }
 
+func readFromFile(filename string) string {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return ""
+	}
+	return string(b)
+}
+
 func toYAML(v interface{}) string {
 	data, err := yaml.Marshal(v)
 	if err != nil {
@@ -42,9 +51,11 @@ func toYAML(v interface{}) string {
 }
 
 func customFuncMap() template.FuncMap {
-	f := sprig.FuncMap()
+	f := sprig.TxtFuncMap()
 	extra := template.FuncMap{
-		"toYaml": toYAML,
+		"toYaml":            toYAML,
+		"readFromFile":      readFromFile,
+		"getLocustFilename": getLocustFilename,
 	}
 	for k, v := range extra {
 		f[k] = v

@@ -49,9 +49,11 @@ func renderProjectTemplates(locustName, configFilename string) error {
 			continue
 		}
 
+		filePath := getLocustProjectPath(locustName, filename)
+
 		if _, err := renderTemplateFile(
 			getLocustHomeTemplatesPath(filename),
-			getLocustProjectPath(locustName, filename),
+			filePath,
 			values); err != nil {
 			return err
 		}
@@ -60,7 +62,20 @@ func renderProjectTemplates(locustName, configFilename string) error {
 	return nil
 }
 
-func applyYamlToK8s() {
+func applyYamlFiles(namespace string, locustName string) error {
+	for _, filename := range locustFilenames {
+		if !strings.HasSuffix(filename, ".yaml") ||
+			strings.HasSuffix(filename, valuesFilename) {
+			continue
+		}
+
+		obj, err := kube.Apply(namespace, getLocustProjectPath(locustName, filename))
+		if err != nil {
+			return err
+		}
+		klog.Infof("%s `%s` configured", strings.ToLower(obj.GetKind()), obj.GetName())
+	}
+	return nil
 }
 
 func ApplyLocust(namespace string, locustName string) error {
@@ -91,5 +106,14 @@ func ApplyLocust(namespace string, locustName string) error {
 		return err
 	}
 
+	if err := applyYamlFiles(namespace, locustName); err != nil {
+		return err
+	}
+
+	klog.Infof("> End applying locust cluster: %s", locustName)
+
+	if err := PrintLocustDeployments(namespace); err != nil {
+		return err
+	}
 	return nil
 }

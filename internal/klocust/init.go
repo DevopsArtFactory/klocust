@@ -88,7 +88,7 @@ func InitLocust(namespace string, locustName string) error {
 	klog.Infof("\n✓ %s has been successfully initialized!\n", locustName)
 	klog.Infof("Please change `%s` and `%s` files.\n", configFilename, locustFilename)
 	klog.Infof("And create locust cluster with next commands.\n\n")
-	klog.Infof("$ klocust apply %s -n %s\n", locustName, namespace)
+	klog.Infof("$ klocust apply %s", locustName)
 
 	return nil
 }

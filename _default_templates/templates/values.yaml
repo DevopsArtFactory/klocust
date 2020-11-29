@@ -2,6 +2,9 @@
 namespace: {{ .Namespace }}
 locustName: {{ .LocustName }}
 
+configmap:
+  locustFilename: {{ .LocustName }}-locustfile.py
+
 main:
   requests:
     cpu: {{ .Main.Requests.CPU | default "250m" }}
@@ -39,22 +42,42 @@ service:
   labels: {}
 {{- if .Service.EnableFargate }}
   annotations:
-  # For EKS on Fargate
+    # For EKS on Fargate
     alb.ingress.kubernetes.io/target-type: ip
 {{- else }}
   annotations: {}
+    # For EKS on Fargate
+    #alb.ingress.kubernetes.io/target-type: ip
 {{ end }}
 
 {{- if .Ingress.Class }}
 ingress:
   class: {{ .Ingress.Class }}
-  host: locust-{{ .LocustName }}.{{ .Ingress.Host }}
+  host: locust-{{ .LocustName }}.{{ .Ingress.Host | default "example.com" }}
   {{- if eq .Ingress.Class "alb" }}
   alb:
     scheme: {{ .Ingress.ALB.Scheme | default "internal" }}
     securityGroups: {{ .Ingress.ALB.SecurityGroups }}
     certificateARN: {{ .Ingress.ALB.CertificateARN }}
+  {{- end }}
   labels: {}
   annotations: {}
-  {{- end }}
-{{ end }}
+{{- end }}
+
+# example of nginx ingress
+#ingress:
+#  class: nginx
+#  host: locust-{{ .LocustName }}.example.com
+#  labels: {}
+#  annotations: {}
+
+# example of ALB example
+#ingress:
+#  class: alb
+#  host: locust-{{ .LocustName }}.example.com
+#  alb:
+#    scheme: internal
+#    securityGroups: sg-abcd1234, sg-defg1234
+#    certificateARN: arn:aws:acm:ap-northeast-2:000:cerficiate/xxx-xxx-xxxx
+#  labels: {}
+#  annotations: {}

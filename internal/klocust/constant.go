@@ -37,6 +37,7 @@ const (
 	serviceFilename          = "main-service.yaml"
 	mainDeploymentFilename   = "main-deployment.yaml"
 	workerDeploymentFilename = "worker-deployment.yaml"
+	configMapFilename        = "configmap.yaml"
 	valuesFilename           = "values.yaml"
 
 	locustGitRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
@@ -46,11 +47,13 @@ const (
 
 var locustFilenames = []string{
 	locustFilename,
-	ingressFilename,
-	serviceFilename,
+
+	valuesFilename,
+	configMapFilename,
 	mainDeploymentFilename,
 	workerDeploymentFilename,
-	valuesFilename,
+	serviceFilename,
+	ingressFilename,
 }
 
 func getLocustGitRepoTemplatePath(filename string) string {

@@ -8,6 +8,14 @@ type LocustValues struct {
 	// Name of locust cluster
 	LocustName string `yaml:"locustName"`
 
+	// Locust ConfigMap
+	ConfigMap struct {
+
+		// filename of locustfile
+		LocustFilename     string `yaml:"locustFilename"`
+		LocustFileContents string `yaml:"locustFileContents"`
+	}
+
 	// Loucst Main Node
 	Main struct {
 		// Resource Requests of Main Node
@@ -109,7 +117,7 @@ type LocustValues struct {
 			// SecurityGroups of ALB (separate with ,)
 			SecurityGroups string `yaml:"securityGroups"`
 			// CetificateARN of ALB (if ALB with SSL)
-			CertificateARN string `yaml:"cetificateARN"`
+			CertificateARN string `yaml:"certificateARN"`
 		} `yaml:"alb"`
 
 		// Labels of Main Ingress
