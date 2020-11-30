@@ -32,7 +32,7 @@ import (
 )
 
 var (
-	HandleFuncs = map[string]func(context.Context, kubernetes.Interface, *unstructured.Unstructured, []byte) error{
+	handleFuncs = map[string]func(context.Context, kubernetes.Interface, *unstructured.Unstructured, []byte) error{
 		"configmap":  configmap,
 		"deployment": deployment,
 		"service":    service,
@@ -100,7 +100,7 @@ func Apply(namespace, filename string) (*unstructured.Unstructured, error) {
 		return nil, fmt.Errorf("%v, unmarshal yaml failed", err)
 	}
 
-	f, ok := HandleFuncs[strings.ToLower(obj.GetKind())]
+	f, ok := handleFuncs[strings.ToLower(obj.GetKind())]
 	if !ok {
 		return nil, fmt.Errorf("unsupported kind: %s", obj.GetKind())
 	}
