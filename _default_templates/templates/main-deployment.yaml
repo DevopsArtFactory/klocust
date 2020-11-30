@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Namespace }}
   name: locust-main-{{ .LocustName }}
   labels:
     name: locust-main-{{ .LocustName }}

@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Namespace }}
   name: locust-worker-{{ .LocustName }}
   labels:
     name: locust-worker-{{ .LocustName }}
@@ -20,7 +21,7 @@ spec:
 {{- with .Worker.Labels }}
 {{ toYaml . | indent 8 }}
 {{- end }}
-     spec:
+    spec:
 {{- with .Worker.NodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
@@ -43,7 +44,7 @@ spec:
             limits:
               cpu: {{ .Worker.Limits.CPU }}
               memory: {{ .Worker.Limits.Memory }}
-          args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--worker", "--master-host", "locust-master-{{ .LocustName }}"]
+          args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--worker", "--master-host", "locust-main-{{ .LocustName }}"]
           volumeMounts:
             - mountPath: /mnt/locust/
               name: locust-scripts

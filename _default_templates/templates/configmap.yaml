@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Namespace }}
+  name: locust-cm-{{ .LocustName }}
+data:
+  {{ .LocustName | getLocustFilename }}: |
+{{ .LocustName | getLocustFilename | readFromFile | indent 4 }}

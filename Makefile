@@ -137,4 +137,4 @@ cover:
 
 .PHONY: run
 run:
-	@go run ./cmd/main.go $(RUN_ARGS)
+	@ go run ./cmd/main.go $(RUN_ARGS)

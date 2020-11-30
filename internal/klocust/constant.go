@@ -28,7 +28,7 @@ var (
 const (
 	locustlProjectDir                   = "./.klocust"
 	locustProjectDefaultTemplatesDir    = locustlProjectDir + "/_default_templates"
-	locustMainDeploymentPrefix        = "locust-main-"
+	locustMainDeploymentPrefix          = "locust-main-"
 	locustConfigFileSuffixWithExtension = "-klocust.yaml"
 	locustFileSuffixWithExtension       = "-locustfile.py"
 
@@ -37,6 +37,7 @@ const (
 	serviceFilename          = "main-service.yaml"
 	mainDeploymentFilename   = "main-deployment.yaml"
 	workerDeploymentFilename = "worker-deployment.yaml"
+	configMapFilename        = "configmap.yaml"
 	valuesFilename           = "values.yaml"
 
 	locustGitRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
@@ -46,15 +47,17 @@ const (
 
 var locustFilenames = []string{
 	locustFilename,
-	ingressFilename,
-	serviceFilename,
+
+	valuesFilename,
+	configMapFilename,
 	mainDeploymentFilename,
 	workerDeploymentFilename,
-	valuesFilename,
+	serviceFilename,
+	ingressFilename,
 }
 
 func getLocustGitRepoTemplatePath(filename string) string {
-	subDir := "main/_default_templates/tmpl"
+	subDir := "main/_default_templates/templates"
 	if strings.HasSuffix(filename, ".py") {
 		subDir = "main/_default_templates/tasks"
 	}

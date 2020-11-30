@@ -4,7 +4,7 @@ import (
 	"context"
 	v1 "k8s.io/api/apps/v1"
 	. "k8s.io/apimachinery/pkg/api/errors"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
@@ -13,7 +13,7 @@ func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
 		return nil, err
 	}
 
-	deployment, err := client.AppsV1().Deployments(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
+	deployment, err := client.AppsV1().Deployments(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func GetDeployments(namespace string) (*v1.DeploymentList, error) {
 		return nil, err
 	}
 
-	deployments, err := client.AppsV1().Deployments(namespace).List(context.TODO(), meta_v1.ListOptions{})
+	deployments, err := client.AppsV1().Deployments(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
