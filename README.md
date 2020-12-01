@@ -22,7 +22,7 @@ echo 'source <(kubectl completion zsh)' >>~/.zsh
 ## Usages
 
 ### klocust list
-- Display all of Locust clusters
+Display all of Locust clusters
 ```bash
 $ klocust list
 
@@ -30,47 +30,50 @@ $ klocust list
 +-------+---------------------+-------+------------+-----------+------+
 | NAME  | DEPLOYMENT          | READY | UP-TO-DATE | AVAILABLE | AGE  |
 +-------+---------------------+-------+------------+-----------+------+
-| hello | locust-main-hello | 1/1   | 1          | 1         | 9m5s |
+| hello | locust-main-hello   | 1/1   | 1          | 1         | 9m5s |
 +-------+---------------------+-------+------------+-----------+------+
 ```
 
 ### klocust init
-- Create config & locust files before applying. (ex name: hello)
+Create config & locust files before applying. (ex name: hello)
 ```bash
 $ klocust init hello
 ```
 
 #### Update config & locust files
-* Update config & locust files what you need. (ex name: hello)
+Update config & locust files what you need. (ex name: hello)
 ```bash
 $ vi hello-klocust.yaml
 $ vi hello-locustfile.py
 ```
 
-* If you want test locust in your local environments
+If you want test locust in your local environments
 ```bash
 $ docker run -p 8089:8089 -v $PWD:/mnt/locust locustio/locust -f /mnt/locust/hello-locustfile.py
+
 or 
+
 $ pip3 install locust
 $ locust -f hello-locustfile.py
 ```
 
-
-### klocust apply (TODO)
-- Create or Update locust cluster with config & locust files. (ex name: hello)
+### klocust apply
+Create or Update locust cluster with config & locust files. (ex name: hello)
 ```bash
 $ klocust apply hello
-or
-$ klocust apply hello -cf hello-klocust.yaml -lf hello-locustfile.yaml
 ```
 
-### klocust delete (TODO)
-- Delete locust cluster (ex name: hello)
+**Connect to your locust cluster and do load testing.**  
+(ex name: hello)  
+```bash
+$ open https://locust-hello.{your domain}
+```
+
+### klocust delete
+Delete locust cluster (ex name: hello)
 ```bash
 $ klocust delete hello
 ```
 
 ## Contribution Guide
-- Check [CONTRIBUTING.md](CONTRIBUTING.md) 
-
-
+Check [CONTRIBUTING.md](CONTRIBUTING.md) 
