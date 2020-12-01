@@ -1,3 +1,19 @@
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package klocust
 
 import (
@@ -5,19 +21,8 @@ import (
 	"os"
 	"strings"
 
-	appsv1 "k8s.io/api/apps/v1"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/api/extensions/v1beta1"
+	"github.com/sirupsen/logrus"
 )
-
-type Locust struct {
-	name             string
-	namespace        string
-	mainDeployment   appsv1.Deployment
-	workerDeployment appsv1.Deployment
-	ingress          v1beta1.Ingress
-	service          v1.Service
-}
 
 var (
 	userHomeDir, _                = os.UserHomeDir()
@@ -27,7 +32,6 @@ var (
 
 const (
 	locustlProjectDir                   = "./.klocust"
-	locustProjectDefaultTemplatesDir    = locustlProjectDir + "/_default_templates"
 	locustMainDeploymentPrefix          = "locust-main-"
 	locustConfigFileSuffixWithExtension = "-klocust.yaml"
 	locustFileSuffixWithExtension       = "-locustfile.py"
@@ -42,7 +46,10 @@ const (
 
 	locustGitRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
 
-	DEFAULT_BUFFER_SIZE int64 = 1024
+	DefaultBufferSize int64 = 1024
+
+	// DefaultLogLevel is the default global verbosity
+	DefaultLogLevel = logrus.WarnLevel
 )
 
 var locustFilenames = []string{
@@ -72,13 +79,14 @@ func getLocustHomeTemplatesPath(filename string) string {
 	return fmt.Sprintf("%s/%s/%s", locustHomeDefaultTemplatesDir, subDir, filename)
 }
 
-func getLocustProjectTemplatesPath(filename string) string {
-	subDir := "templates"
-	if strings.HasSuffix(filename, ".py") {
-		subDir = "tasks"
-	}
-	return fmt.Sprintf("%s/%s/%s", locustProjectDefaultTemplatesDir, subDir, filename)
-}
+// Remove Unused Function later
+//func getLocustProjectTemplatesPath(filename string) string {
+//	subDir := "templates"
+//	if strings.HasSuffix(filename, ".py") {
+//		subDir = "tasks"
+//	}
+//	return fmt.Sprintf("%s/%s/%s", locustProjectDefaultTemplatesDir, subDir, filename)
+//}
 
 func getLocustProjectDir(locustName string) string {
 	return fmt.Sprintf("%s/%s", locustlProjectDir, locustName)

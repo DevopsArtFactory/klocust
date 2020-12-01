@@ -1,4 +1,19 @@
-// completion from https://github.com/GoogleContainerTools/skaffold
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package klocust
 
 import (
@@ -40,10 +55,11 @@ func completion(_ context.Context, _ io.Writer, cmd *cobra.Command, args []strin
 	return nil
 }
 
-// NewCmdCompletion returns the cobra command that outputs shell completion code
-func NewCmdCompletion() *cobra.Command {
+// NewCompletionCmd returns the cobra command that outputs shell completion code
+func NewCompletionCmd() *cobra.Command {
 	return NewCmd("completion").
 		WithDescription("Output shell completion for the given shell (bash or zsh)").
+		WithLongDescription(longDescription).
 		ExactArgs(1, completion)
 }
 

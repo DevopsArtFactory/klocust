@@ -10,7 +10,7 @@ $ brew install klocust
 ``` 
 
 ### Build from source
-See here on how to [build klocust CLI from source][build from source].
+See here on how to [build klocust CLI from source](./docs/build_from_source.md).
 
 ### shell autocompletion for bash/zsh
 ```bash
@@ -55,6 +55,7 @@ $ pip3 install locust
 $ locust -f hello-locustfile.py
 ```
 
+
 ### klocust apply (TODO)
 - Create or Update locust cluster with config & locust files. (ex name: hello)
 ```bash
@@ -69,6 +70,7 @@ $ klocust apply hello -cf hello-klocust.yaml -lf hello-locustfile.yaml
 $ klocust delete hello
 ```
 
+## Contribution Guide
+- Check [CONTRIBUTING.md](CONTRIBUTING.md) 
 
 
-[build from source]: ./docs/build_from_source.md
