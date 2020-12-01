@@ -1,13 +1,29 @@
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package klocust
 
 import (
-	"errors"
 	"fmt"
+
+	"k8s.io/klog/v2"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
-	"k8s.io/klog/v2"
 )
 
 func downloadDefaultTemplates() error {
@@ -24,7 +40,7 @@ func downloadDefaultTemplates() error {
 		}
 
 		if err := util.DownloadFile(srcPath, dstPath); err != nil {
-			return errors.New(fmt.Sprintf("Download Failed %s to %s: %v", srcPath, dstPath, err))
+			return fmt.Errorf("download Failed %s to %s: %v", srcPath, dstPath, err)
 		}
 		klog.Infof("✓ %s file has downloaded.\n", dstPath)
 	}
@@ -51,7 +67,7 @@ func createLocustProject(namespace string, locustName string) (string, string, e
 	locustFilename, err := util.CopyFile(
 		getLocustHomeTemplatesPath(locustFilename),
 		getLocustFilename(locustName),
-		DEFAULT_BUFFER_SIZE)
+		DefaultBufferSize)
 
 	if err != nil {
 		return "", "", err
@@ -68,8 +84,8 @@ func InitLocust(namespace string, locustName string) error {
 	mainDeploymentName := getLocustMainDeploymentName(locustName)
 	if isExist, err := kube.IsDeploymentExists(namespace, mainDeploymentName); isExist || err != nil {
 		if isExist {
-			return errors.New(fmt.Sprintf("`%s` deployment is already exists in `%s` namespace.",
-				mainDeploymentName, namespace))
+			return fmt.Errorf("`%s` deployment is already exists in `%s` namespace",
+				mainDeploymentName, namespace)
 		}
 		return err
 	}

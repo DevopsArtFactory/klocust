@@ -1,8 +1,23 @@
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package kube
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -70,10 +85,10 @@ func Apply(namespace, filename string) (*unstructured.Unstructured, error) {
 
 	var typeMeta runtime.TypeMeta
 	if err := yaml.Unmarshal(bytes, &typeMeta); err != nil {
-		return nil, errors.New(fmt.Sprintf("%v, Decode yaml failed.", err))
+		return nil, fmt.Errorf("%v, decode yaml failed", err)
 	}
 	if typeMeta.Kind == "" {
-		return nil, errors.New(fmt.Sprintf("%v, Type kind is empty.", err))
+		return nil, fmt.Errorf("%v, type kind is empty", err)
 	}
 
 	// Decode to unstructured object
@@ -82,12 +97,12 @@ func Apply(namespace, filename string) (*unstructured.Unstructured, error) {
 
 	_, _, err = dec.Decode(bytes, nil, obj)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("%v, Unmarshal yaml failed.", err))
+		return nil, fmt.Errorf("%v, unmarshal yaml failed", err)
 	}
 
 	f, ok := HandleFuncs[strings.ToLower(obj.GetKind())]
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("Unsupported kind: %s.", obj.GetKind()))
+		return nil, fmt.Errorf("unsupported kind: %s", obj.GetKind())
 	}
 
 	if err := f(context.TODO(), client, obj, bytes); err != nil {

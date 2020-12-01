@@ -1,24 +1,38 @@
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package klocust
 
 import (
-	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"strings"
+
+	"gopkg.in/yaml.v2"
+	"k8s.io/klog/v2"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
-	"k8s.io/klog/v2"
 )
 
 func checkInitFileNotFound(filenames []string, locustName string) error {
 	for _, filename := range filenames {
 		if isExist := util.IsFileExists(filename); !isExist {
-			return errors.New(fmt.Sprintf(
-				"`%s` file not found. \nYou need to init first before apply.\n\n$ klocust init %s\n",
-				filename, locustName))
+			return fmt.Errorf("`%s` file not found. \nYou need to init first before apply.\n\n$ klocust init %s", filename, locustName)
 		}
 	}
 	return nil

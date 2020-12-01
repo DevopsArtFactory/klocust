@@ -1,7 +1,22 @@
+/*
+Copyright 2020 The klocust Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package util
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,7 +44,7 @@ func IsDirExists(dirName string) bool {
 
 func CreateDir(dirName string) error {
 	if IsDirExists(dirName) {
-		return errors.New(fmt.Sprintf("`%s` directory exists already.", dirName))
+		return fmt.Errorf("`%s` directory exists already", dirName)
 	}
 	if err := os.MkdirAll(dirName, 0700); err != nil {
 		return err
@@ -53,7 +68,7 @@ func DownloadFile(url string, dstPath string) error {
 	}
 
 	if response.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("status code %v", response.StatusCode))
+		return fmt.Errorf("status code: %v", response.StatusCode)
 	}
 
 	file, err := os.Create(dstPath)
@@ -97,7 +112,7 @@ func CopyFile(src, dst string, bufferSize int64) (string, error) {
 	}
 
 	if !srcFileStat.Mode().IsRegular() {
-		return "", errors.New(fmt.Sprintf("%s is not a regular file.", src))
+		return "", fmt.Errorf("%s is not a regular file", src)
 	}
 
 	source, err := os.Open(src)
@@ -110,7 +125,7 @@ func CopyFile(src, dst string, bufferSize int64) (string, error) {
 
 	_, err = os.Stat(dst)
 	if err == nil {
-		return "", errors.New(fmt.Sprintf("File %s already exists.", src))
+		return "", fmt.Errorf("file %s already exists", src)
 	}
 
 	destination, err := os.Create(dst)
