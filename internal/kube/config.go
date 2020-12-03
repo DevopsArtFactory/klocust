@@ -21,11 +21,23 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func NewClient() (kubernetes.Interface, error) {
+var client kubernetes.Interface
+
+func newClient() (kubernetes.Interface, error) {
 	kubeConfig, err := clientcmd.BuildConfigFromFlags("", clientcmd.RecommendedHomeFile)
 	if err != nil {
 		return nil, err
 	}
 
 	return kubernetes.NewForConfig(kubeConfig)
+}
+
+func GetKubeClient() (kubernetes.Interface, error) {
+	if client == nil {
+		var err error
+		if client, err = newClient(); err != nil {
+			return nil, err
+		}
+	}
+	return client, nil
 }

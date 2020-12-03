@@ -12,7 +12,7 @@ func doDelete(_ context.Context, _ io.Writer, _ *cobra.Command, args []string) e
 	return klocust.DeleteLocust(opts.Namespace, locustName)
 }
 
-func NewDeleteCMD() *cobra.Command {
+func NewDeleteCmd() *cobra.Command {
 	return NewCmd("delete").
 		WithDescription("Delete klocust cluster").
 		WithCommonFlags().

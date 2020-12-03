@@ -25,7 +25,7 @@ import (
 )
 
 func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
-	client, err := NewClient()
+	client, err := GetKubeClient()
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func GetDeployment(namespace string, name string) (*v1.Deployment, error) {
 }
 
 func GetDeployments(namespace string) (*v1.DeploymentList, error) {
-	client, err := NewClient()
+	client, err := GetKubeClient()
 	if err != nil {
 		return nil, err
 	}

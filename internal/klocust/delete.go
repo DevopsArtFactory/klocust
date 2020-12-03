@@ -3,6 +3,7 @@ package klocust
 import (
 	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
 	"k8s.io/klog/v2"
 	"strings"
 )
@@ -14,7 +15,7 @@ func deleteFromYamlFiles(namespace string, locustName string) error {
 			continue
 		}
 
-		obj, err := kube.Delete(namespace, getLocustProjectPath(locustName, filename))
+		obj, err := handler.Delete(namespace, getLocustProjectPath(locustName, filename))
 		if err != nil {
 			return err
 		}

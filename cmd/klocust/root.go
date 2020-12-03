@@ -77,6 +77,7 @@ func NewRootCommand(out, stderr io.Writer) *cobra.Command {
 			Commands: []*cobra.Command{
 				NewListCmd(),
 				NewApplyCmd(),
+				NewDeleteCmd(),
 			},
 		},
 		{
