@@ -18,6 +18,7 @@ package klocust
 
 import (
 	"fmt"
+	"github.com/DevopsArtFactory/klocust/internal/util"
 	"os"
 	"strings"
 
@@ -36,7 +37,7 @@ const (
 	locustConfigFileSuffixWithExtension = "-klocust.yaml"
 	locustFileSuffixWithExtension       = "-locustfile.py"
 
-	locustFilename           = "locustfile.py"
+	defaultLocustFilename    = "locustfile.py"
 	ingressFilename          = "main-ingress.yaml"
 	serviceFilename          = "main-service.yaml"
 	mainDeploymentFilename   = "main-deployment.yaml"
@@ -53,7 +54,7 @@ const (
 )
 
 var locustFilenames = []string{
-	locustFilename,
+	defaultLocustFilename,
 
 	valuesFilename,
 	configMapFilename,
@@ -79,15 +80,6 @@ func getLocustHomeTemplatesPath(filename string) string {
 	return fmt.Sprintf("%s/%s/%s", locustHomeDefaultTemplatesDir, subDir, filename)
 }
 
-// Remove Unused Function later
-//func getLocustProjectTemplatesPath(filename string) string {
-//	subDir := "templates"
-//	if strings.HasSuffix(filename, ".py") {
-//		subDir = "tasks"
-//	}
-//	return fmt.Sprintf("%s/%s/%s", locustProjectDefaultTemplatesDir, subDir, filename)
-//}
-
 func getLocustProjectDir(locustName string) string {
 	return fmt.Sprintf("%s/%s", locustlProjectDir, locustName)
 }
@@ -105,4 +97,18 @@ func getLocustFilename(locustName string) string {
 
 func getLocustMainDeploymentName(locustName string) string {
 	return locustMainDeploymentPrefix + locustName
+}
+
+func checkInitFileNotFound(locustName string) error {
+	filenames := []string{
+		getLocustConfigFilename(locustName),
+		getLocustFilename(locustName),
+	}
+
+	for _, filename := range filenames {
+		if isExist := util.IsFileExists(filename); !isExist {
+			return fmt.Errorf("`%s` file not found. \nYou need to init first before apply.\n\n$ klocust init %s", filename, locustName)
+		}
+	}
+	return nil
 }

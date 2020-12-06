@@ -50,14 +50,6 @@ func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value sc
 	return valuesFilePath, nil
 }
 
-func readFromFile(filename string) string {
-	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return ""
-	}
-	return string(b)
-}
-
 func toYAML(v interface{}) string {
 	data, err := yaml.Marshal(v)
 	if err != nil {
@@ -67,12 +59,29 @@ func toYAML(v interface{}) string {
 	return strings.TrimSuffix(string(data), "\n")
 }
 
+func readFromFile(filename string) string {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return ""
+	}
+	return string(b)
+}
+
+func getFileSha256Checksum(filename string) string {
+	checksum, err := util.GetSha256Checksum(filename)
+	if err != nil {
+		return ""
+	}
+	return checksum
+}
+
 func customFuncMap() template.FuncMap {
 	f := sprig.TxtFuncMap()
 	extra := template.FuncMap{
-		"toYaml":            toYAML,
-		"readFromFile":      readFromFile,
-		"getLocustFilename": getLocustFilename,
+		"toYaml":                toYAML,
+		"readFromFile":          readFromFile,
+		"getLocustFilename":     getLocustFilename,
+		"getFileSha256Checksum": getFileSha256Checksum,
 	}
 	for k, v := range extra {
 		f[k] = v
@@ -93,6 +102,18 @@ func renderTemplateFile(tmplFilepath string, projectFilepath string, values sche
 
 	if err := t.Execute(f, values); err != nil {
 		return "", err
+	}
+
+	size, err := util.GetFileSize(projectFilepath)
+	if err != nil {
+		return "", err
+	}
+
+	if size == 0 {
+		if err := util.DeleteFile(projectFilepath); err != nil {
+			return "", err
+		}
+		return "", nil
 	}
 
 	return projectFilepath, nil

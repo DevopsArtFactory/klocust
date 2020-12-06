@@ -65,7 +65,7 @@ func createLocustProject(namespace string, locustName string) (string, string, e
 
 	// Create ./{locustName}-locustfile.py file
 	locustFilename, err := util.CopyFile(
-		getLocustHomeTemplatesPath(locustFilename),
+		getLocustHomeTemplatesPath(defaultLocustFilename),
 		getLocustFilename(locustName),
 		DefaultBufferSize)
 

@@ -17,6 +17,8 @@ limitations under the License.
 package util
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -152,4 +154,34 @@ func CopyFile(src, dst string, bufferSize int64) (string, error) {
 	}
 
 	return dst, err
+}
+
+func GetSha256Checksum(filename string) (string, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(h.Sum(nil)), nil
+}
+
+func DeleteFile(filename string) error {
+	if err := os.Remove(filename); err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetFileSize(filename string) (int64, error) {
+	stat, err := os.Stat(filename)
+	if err != nil {
+		return 0, err
+	}
+	return stat.Size(), nil
 }
