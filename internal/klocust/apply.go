@@ -17,7 +17,6 @@ limitations under the License.
 package klocust
 
 import (
-	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
 	"io/ioutil"
 	"strings"
@@ -30,34 +29,27 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/util"
 )
 
-func checkInitFileNotFound(filenames []string, locustName string) error {
-	for _, filename := range filenames {
-		if isExist := util.IsFileExists(filename); !isExist {
-			return fmt.Errorf("`%s` file not found. \nYou need to init first before apply.\n\n$ klocust init %s", filename, locustName)
-		}
-	}
-	return nil
-}
+func renderProjectTemplates(locustName string) ([]string, error) {
+	var renderedFileList []string
 
-func renderProjectTemplates(locustName, configFilename string) error {
 	projectDir := getLocustProjectDir(locustName)
 
 	if !util.IsDirExists(projectDir) {
 		if err := util.CreateDir(projectDir); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	yamlFile, err := ioutil.ReadFile(configFilename)
+	yamlFile, err := ioutil.ReadFile(getLocustConfigFilename(locustName))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var values schemas.LocustValues
 	if err := yaml.Unmarshal(yamlFile, &values); err != nil {
-		return err
+		return nil, err
 	}
 
-	// Create ./.klocust/{locustName}/{LocustFilenames}.yaml
+	// Create ./.klocust/{locustName}/{...LocustFilenames}.yaml
 	for _, filename := range locustFilenames {
 		if !strings.HasSuffix(filename, ".yaml") ||
 			strings.HasSuffix(filename, valuesFilename) {
@@ -66,25 +58,33 @@ func renderProjectTemplates(locustName, configFilename string) error {
 
 		filePath := getLocustProjectPath(locustName, filename)
 
-		if _, err := renderTemplateFile(
+		renderedFile, err := renderTemplateFile(
 			getLocustHomeTemplatesPath(filename),
 			filePath,
-			values); err != nil {
-			return err
+			values)
+
+		if err != nil {
+			return nil, err
 		}
+
+		if renderedFile == "" {
+			continue
+		}
+
+		renderedFileList = append(renderedFileList, renderedFile)
 	}
 
-	return nil
+	return renderedFileList, nil
 }
 
-func applyYamlFiles(namespace string, locustName string) error {
-	for _, filename := range locustFilenames {
+func applyYamlFiles(namespace string, yamlFiles []string) error {
+	for _, filename := range yamlFiles {
 		if !strings.HasSuffix(filename, ".yaml") ||
 			strings.HasSuffix(filename, valuesFilename) {
 			continue
 		}
 
-		obj, err := handler.Apply(namespace, getLocustProjectPath(locustName, filename))
+		obj, err := handler.Apply(namespace, filename)
 		if err != nil {
 			return err
 		}
@@ -94,10 +94,7 @@ func applyYamlFiles(namespace string, locustName string) error {
 }
 
 func ApplyLocust(namespace string, locustName string) error {
-	configFilename := getLocustConfigFilename(locustName)
-	locustFilename := getLocustFilename(locustName)
-
-	if err := checkInitFileNotFound([]string{configFilename, locustFilename}, locustName); err != nil {
+	if err := checkInitFileNotFound(locustName); err != nil {
 		return err
 	}
 
@@ -117,11 +114,12 @@ func ApplyLocust(namespace string, locustName string) error {
 		klog.Infof("> Start creating locust cluster: %s\n", locustName)
 	}
 
-	if err := renderProjectTemplates(locustName, configFilename); err != nil {
+	yamlFiles, err := renderProjectTemplates(locustName)
+	if err != nil {
 		return err
 	}
 
-	if err := applyYamlFiles(namespace, locustName); err != nil {
+	if err := applyYamlFiles(namespace, yamlFiles); err != nil {
 		return err
 	}
 

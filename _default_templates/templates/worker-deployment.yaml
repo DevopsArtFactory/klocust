@@ -7,15 +7,20 @@ metadata:
     name: locust-worker-{{ .LocustName }}
 {{- with .Worker.Annotations }}
   annotations:
-{{ toYaml . | indent 4 }}
+  {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+  revisionHistoryLimit: 0
+  strategy:
+    type: Recreate
   replicas: {{ .Worker.Count }}
   selector:
     matchLabels:
       app: locust-worker-{{ .LocustName }}
   template:
     metadata:
+      annotations:
+        locustfile-checksum: {{ .LocustName | getLocustFilename | getFileSha256Checksum }}
       labels:
         app: locust-worker-{{ .LocustName }}
 {{- with .Worker.Labels }}

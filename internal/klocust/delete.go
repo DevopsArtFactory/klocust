@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
+	"github.com/DevopsArtFactory/klocust/internal/util"
 	"k8s.io/klog/v2"
 	"strings"
 )
@@ -15,7 +16,12 @@ func deleteFromYamlFiles(namespace string, locustName string) error {
 			continue
 		}
 
-		obj, err := handler.Delete(namespace, getLocustProjectPath(locustName, filename))
+		filenameWithPath := getLocustProjectPath(locustName, filename)
+		if !util.IsFileExists(filenameWithPath) {
+			continue
+		}
+
+		obj, err := handler.Delete(namespace, filenameWithPath)
 		if err != nil {
 			return err
 		}
@@ -25,10 +31,7 @@ func deleteFromYamlFiles(namespace string, locustName string) error {
 }
 
 func DeleteLocust(namespace string, locustName string) error {
-	configFilename := getLocustConfigFilename(locustName)
-	locustFilename := getLocustFilename(locustName)
-
-	if err := checkInitFileNotFound([]string{configFilename, locustFilename}, locustName); err != nil {
+	if err := checkInitFileNotFound(locustName); err != nil {
 		return err
 	}
 
@@ -45,7 +48,7 @@ func DeleteLocust(namespace string, locustName string) error {
 	}
 
 	if err := deleteFromYamlFiles(namespace, locustName); err != nil {
-		return nil
+		return err
 	}
 
 	return nil
