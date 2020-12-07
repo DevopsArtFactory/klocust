@@ -32,8 +32,7 @@ func doApply(_ context.Context, _ io.Writer, _ *cobra.Command, args []string) er
 
 func NewApplyCmd() *cobra.Command {
 	return NewCmd("apply").
-		WithDescription("Apply klocust cluster.\n"+
-			"This cluster will be created if it doesn't exist yet.").
+		WithDescription("Apply klocust cluster. Cluster will be created if it doesn't exist yet.").
 		WithCommonFlags().
 		ExactArgs(1, doApply)
 }

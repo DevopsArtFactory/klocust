@@ -18,6 +18,7 @@ package klocust
 
 import (
 	"fmt"
+	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
 	"io/ioutil"
 	"strings"
 
@@ -83,7 +84,7 @@ func applyYamlFiles(namespace string, locustName string) error {
 			continue
 		}
 
-		obj, err := kube.Apply(namespace, getLocustProjectPath(locustName, filename))
+		obj, err := handler.Apply(namespace, getLocustProjectPath(locustName, filename))
 		if err != nil {
 			return err
 		}
