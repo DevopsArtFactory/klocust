@@ -108,6 +108,12 @@ func ApplyLocust(namespace string, locustName string) error {
 		return err
 	}
 
+	if !util.IsDirExists(locustHomeDefaultTemplatesDir) {
+		if err := downloadDefaultTemplates(); err != nil {
+			return err
+		}
+	}
+
 	if isExist {
 		klog.Infof("> Start applying locust cluster: %s\n", locustName)
 	} else {
