@@ -19,15 +19,16 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"io/ioutil"
-	"k8s.io/client-go/kubernetes"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	serializeryaml "k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/yaml"
+
+	"github.com/DevopsArtFactory/klocust/internal/kube"
 )
 
 var (

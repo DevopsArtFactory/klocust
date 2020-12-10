@@ -25,8 +25,8 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 )
 
-func doList(_ context.Context, _ io.Writer) error {
-	return klocust.PrintLocustDeployments(opts.Namespace)
+func doList(_ context.Context, out io.Writer) error {
+	return klocust.ListLocustDeployments(out, opts.Namespace)
 }
 
 func NewListCmd() *cobra.Command {

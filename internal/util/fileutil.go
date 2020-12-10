@@ -24,8 +24,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"k8s.io/klog/v2"
 )
 
 func IsFileExists(filename string) bool {
@@ -88,23 +86,6 @@ func DownloadFile(url string, dstPath string) error {
 	}
 
 	return err
-}
-
-func PrintFile(filename string, isPrintFilename bool) error {
-	if isPrintFilename {
-		klog.Infof("> Filename: %s\n", filename)
-	}
-
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-
-	buffer := make([]byte, 1024)
-	if _, err = io.CopyBuffer(os.Stdout, file, buffer); err != nil {
-		return err
-	}
-	return nil
 }
 
 func CopyFile(src, dst string, bufferSize int64) (string, error) {

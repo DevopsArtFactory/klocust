@@ -18,15 +18,17 @@ package klocust
 
 import (
 	"fmt"
+	"io"
 
-	"k8s.io/klog/v2"
+	"github.com/sirupsen/logrus"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
 	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
-func downloadDefaultTemplates() error {
+func downloadDefaultTemplates(out io.Writer) error {
 	if err := util.CreateDir(locustHomeDefaultTemplatesDir); err != nil {
 		return err
 	}
@@ -36,13 +38,13 @@ func downloadDefaultTemplates() error {
 		dstPath := getLocustHomeTemplatesPath(filename)
 
 		if isExist := util.IsFileExists(dstPath); isExist {
-			klog.Errorf("%s file exists already.\n", dstPath)
+			printer.LightRed.Fprintf(out, "%s file exists already.\n", dstPath)
 		}
 
 		if err := util.DownloadFile(srcPath, dstPath); err != nil {
 			return fmt.Errorf("download Failed %s to %s: %v", srcPath, dstPath, err)
 		}
-		klog.Infof("✓ %s file has downloaded.\n", dstPath)
+		printer.Default.Fprintf(out, "✓ %s file has downloaded.\n", dstPath)
 	}
 
 	return nil
@@ -76,12 +78,16 @@ func createLocustProject(namespace string, locustName string) (string, string, e
 	return configFilename, locustFilename, nil
 }
 
-func InitLocust(namespace string, locustName string) error {
+// InitLocust initialize locust files, not creating a cluster
+func InitLocust(out io.Writer, namespace string, locustName string) error {
+	logrus.Debugf("Applied namespace: %s, Name: %s", namespace, locustName)
 	if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
 		return err
 	}
 
 	mainDeploymentName := getLocustMainDeploymentName(locustName)
+	logrus.Debugf("Main deployment name generated: %s", mainDeploymentName)
+
 	if isExist, err := kube.IsDeploymentExists(namespace, mainDeploymentName); isExist || err != nil {
 		if isExist {
 			return fmt.Errorf("`%s` deployment is already exists in `%s` namespace",
@@ -90,21 +96,24 @@ func InitLocust(namespace string, locustName string) error {
 		return err
 	}
 
+	// TODO. This will be deprecated
+	logrus.Debugf("Checking if directory exists..")
 	if !util.IsDirExists(locustHomeDefaultTemplatesDir) {
-		if err := downloadDefaultTemplates(); err != nil {
+		if err := downloadDefaultTemplates(out); err != nil {
 			return err
 		}
 	}
 
+	logrus.Debugf("Start to create locust project...")
 	configFilename, locustFilename, err := createLocustProject(namespace, locustName)
 	if err != nil {
 		return err
 	}
 
-	klog.Infof("\n✓ %s has been successfully initialized!\n", locustName)
-	klog.Infof("Please change `%s` and `%s` files.\n", configFilename, locustFilename)
-	klog.Infof("And create locust cluster with next commands.\n\n")
-	klog.Infof("$ klocust apply %s", locustName)
+	printer.Green.Fprintf(out, "✓ %s has been successfully initialized!\n", locustName)
+	printer.Default.Fprintf(out, "Please change `%s` and `%s` files.\n", configFilename, locustFilename)
+	printer.Default.Fprintf(out, "And create locust cluster with next commands.\n\n")
+	printer.Green.Fprintln(out, fmt.Sprintf("$ klocust apply %s", locustName))
 
 	return nil
 }
