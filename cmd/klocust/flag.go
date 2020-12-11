@@ -44,6 +44,10 @@ type CommonFlag struct {
 
 var opts CommonFlag
 
+var (
+	allNamespace bool
+)
+
 var flagRegistry = []Flag{
 	{
 		Name:          "namespace",
@@ -61,6 +65,12 @@ func (fl *Flag) flag() *pflag.Flag {
 		return fl.pflag
 	}
 
+	methodName := fl.FlagAddMethod
+
+	if len(methodName) == 0 {
+		methodName = setDefaultMethodNameByType(reflect.ValueOf(fl.Value))
+	}
+
 	inputs := []interface{}{fl.Value, fl.Name}
 	if fl.FlagAddMethod != "Var" {
 		inputs = append(inputs, fl.DefValue)
@@ -69,13 +79,31 @@ func (fl *Flag) flag() *pflag.Flag {
 
 	fs := pflag.NewFlagSet(fl.Name, pflag.ContinueOnError)
 
-	reflect.ValueOf(fs).MethodByName(fl.FlagAddMethod).Call(reflectValueOf(inputs))
+	reflect.ValueOf(fs).MethodByName(methodName).Call(reflectValueOf(inputs))
 	f := fs.Lookup(fl.Name)
 	f.Shorthand = fl.Shorthand
 	f.Hidden = fl.Hidden
 
 	fl.pflag = f
 	return f
+}
+
+func setDefaultMethodNameByType(v reflect.Value) string {
+	t := v.Type().Kind()
+	switch t {
+	case reflect.Bool:
+		return "BoolVar"
+	case reflect.String:
+		return "StringVar"
+	case reflect.Slice:
+		return "StringSliceVar"
+	case reflect.Struct:
+		return "Var"
+	case reflect.Ptr:
+		return setDefaultMethodNameByType(reflect.Indirect(v))
+	}
+
+	return ""
 }
 
 func reflectValueOf(values []interface{}) []reflect.Value {

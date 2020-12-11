@@ -129,7 +129,7 @@ func ApplyLocust(out io.Writer, namespace string, locustName string) error {
 
 	printer.Default.Fprintf(out, "> End applying locust cluster: %s\n\n", locustName)
 
-	if err := ListLocustDeployments(out, namespace); err != nil {
+	if err := ListLocustDeployments(out, namespace, false); err != nil {
 		return err
 	}
 	return nil

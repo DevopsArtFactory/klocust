@@ -24,7 +24,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -33,7 +32,7 @@ type Builder interface {
 	WithDescription(description string) Builder
 	WithLongDescription(long string) Builder
 	WithExample(comment, command string) Builder
-	WithFlags(adder func(*pflag.FlagSet)) Builder
+	WithFlags(flags []*Flag) Builder
 	SetAliases(alias []string) Builder
 	WithCommonFlags() Builder
 	Hidden() Builder
@@ -77,8 +76,11 @@ func (b *builder) WithCommonFlags() Builder {
 	return b
 }
 
-func (b *builder) WithFlags(adder func(*pflag.FlagSet)) Builder {
-	adder(b.cmd.Flags())
+func (b *builder) WithFlags(flags []*Flag) Builder {
+	for _, f := range flags {
+		fl := f.flag()
+		b.cmd.Flags().AddFlag(fl)
+	}
 	return b
 }
 
