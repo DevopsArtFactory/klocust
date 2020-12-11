@@ -21,6 +21,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/color"
 	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -34,6 +35,10 @@ import (
 var (
 	cfgFile string
 	v       string
+
+	// User can set default printer
+	defaultColor int
+	forceColors  bool
 )
 
 // Get root command
@@ -46,16 +51,17 @@ func NewRootCommand(out, stderr io.Writer) *cobra.Command {
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			cmd.Root().SetOutput(out)
-
 			// Setup logs
 			if err := SetUpLogs(stderr, v); err != nil {
 				return err
 			}
 
+			out = color.SetupColors(out, defaultColor, forceColors)
+			cmd.Root().SetOutput(out)
+
 			version := version.Get()
 
-			logrus.Infof("Klocust %+v", version)
+			logrus.Infof("klocust %+v", version)
 
 			return nil
 		},

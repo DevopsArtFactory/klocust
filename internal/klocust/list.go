@@ -17,6 +17,7 @@ limitations under the License.
 package klocust
 
 import (
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -24,9 +25,9 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	v1 "k8s.io/api/apps/v1"
-	"k8s.io/klog/v2"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
 func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
@@ -45,7 +46,8 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 	return locustDeployments, nil
 }
 
-func PrintLocustDeployments(namespace string) error {
+// ListLocustDeployments shows list of locust cluster in kubernetes cluster
+func ListLocustDeployments(out io.Writer, namespace string) error {
 	if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
 		return err
 	}
@@ -55,7 +57,7 @@ func PrintLocustDeployments(namespace string) error {
 		return err
 	}
 
-	klog.Infof(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
+	printer.Green.Fprintf(out, ">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
 		len(locustDeployments), namespace, locustMainDeploymentPrefix)
 
 	if len(locustDeployments) == 0 {

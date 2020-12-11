@@ -25,9 +25,9 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 )
 
-func doApply(_ context.Context, _ io.Writer, _ *cobra.Command, args []string) error {
+func doApply(_ context.Context, out io.Writer, _ *cobra.Command, args []string) error {
 	locustName := args[0]
-	return klocust.ApplyLocust(opts.Namespace, locustName)
+	return klocust.ApplyLocust(out, opts.Namespace, locustName)
 }
 
 func NewApplyCmd() *cobra.Command {
