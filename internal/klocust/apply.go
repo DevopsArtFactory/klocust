@@ -17,16 +17,18 @@ limitations under the License.
 package klocust
 
 import (
-	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
+	"io"
 	"io/ioutil"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"k8s.io/klog/v2"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
 	"github.com/DevopsArtFactory/klocust/internal/schemas"
 	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
 func renderProjectTemplates(locustName string) ([]string, error) {
@@ -77,7 +79,7 @@ func renderProjectTemplates(locustName string) ([]string, error) {
 	return renderedFileList, nil
 }
 
-func applyYamlFiles(namespace string, yamlFiles []string) error {
+func applyYamlFiles(out io.Writer, namespace string, yamlFiles []string) error {
 	for _, filename := range yamlFiles {
 		if !strings.HasSuffix(filename, ".yaml") ||
 			strings.HasSuffix(filename, valuesFilename) {
@@ -88,12 +90,14 @@ func applyYamlFiles(namespace string, yamlFiles []string) error {
 		if err != nil {
 			return err
 		}
-		klog.Infof("%s `%s` configured", strings.ToLower(obj.GetKind()), obj.GetName())
+		printer.Default.Fprintf(out, "%s `%s` configured\n", strings.ToLower(obj.GetKind()), obj.GetName())
 	}
 	return nil
 }
 
-func ApplyLocust(namespace string, locustName string) error {
+// ApplyLocust creates a locust cluster with configuration files
+func ApplyLocust(out io.Writer, namespace string, locustName string) error {
+	logrus.Debugf("Applied namespace: %s, Name: %s", namespace, locustName)
 	if err := checkInitFileNotFound(locustName); err != nil {
 		return err
 	}
@@ -109,9 +113,9 @@ func ApplyLocust(namespace string, locustName string) error {
 	}
 
 	if isExist {
-		klog.Infof("> Start applying locust cluster: %s\n", locustName)
+		printer.Default.Fprintf(out, "> Start applying locust cluster: %s\n", locustName)
 	} else {
-		klog.Infof("> Start creating locust cluster: %s\n", locustName)
+		printer.Default.Fprintf(out, "> Start creating locust cluster: %s\n", locustName)
 	}
 
 	yamlFiles, err := renderProjectTemplates(locustName)
@@ -119,13 +123,13 @@ func ApplyLocust(namespace string, locustName string) error {
 		return err
 	}
 
-	if err := applyYamlFiles(namespace, yamlFiles); err != nil {
+	if err := applyYamlFiles(out, namespace, yamlFiles); err != nil {
 		return err
 	}
 
-	klog.Infof("> End applying locust cluster: %s", locustName)
+	printer.Default.Fprintf(out, "> End applying locust cluster: %s\n\n", locustName)
 
-	if err := PrintLocustDeployments(namespace); err != nil {
+	if err := ListLocustDeployments(out, namespace, false); err != nil {
 		return err
 	}
 	return nil

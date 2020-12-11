@@ -18,11 +18,12 @@ package klocust
 
 import (
 	"fmt"
-	"github.com/DevopsArtFactory/klocust/internal/util"
 	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/DevopsArtFactory/klocust/internal/util"
 )
 
 var (
@@ -99,6 +100,7 @@ func getLocustMainDeploymentName(locustName string) string {
 	return locustMainDeploymentPrefix + locustName
 }
 
+// checkInitFileNotFound checks if there is init file
 func checkInitFileNotFound(locustName string) error {
 	filenames := []string{
 		getLocustConfigFilename(locustName),

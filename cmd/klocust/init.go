@@ -25,9 +25,9 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 )
 
-func doInit(_ context.Context, _ io.Writer, _ *cobra.Command, args []string) error {
+func doInit(_ context.Context, out io.Writer, _ *cobra.Command, args []string) error {
 	locustName := args[0]
-	return klocust.InitLocust(opts.Namespace, locustName)
+	return klocust.InitLocust(out, opts.Namespace, locustName)
 }
 
 func NewInitCmd() *cobra.Command {

@@ -25,13 +25,16 @@ import (
 	"github.com/DevopsArtFactory/klocust/internal/klocust"
 )
 
-func doList(_ context.Context, _ io.Writer) error {
-	return klocust.PrintLocustDeployments(opts.Namespace)
+func doList(_ context.Context, out io.Writer) error {
+	return klocust.ListLocustDeployments(out, opts.Namespace, allNamespace)
 }
 
 func NewListCmd() *cobra.Command {
 	return NewCmd("list").
 		WithDescription("Display all of Locust clusters").
 		WithCommonFlags().
+		WithFlags([]*Flag{
+			{Value: &allNamespace, Name: "all", Shorthand: "A", DefValue: false, Usage: "Apply all namespaces of kubernetes cluster"},
+		}).
 		NoArgs(doList)
 }

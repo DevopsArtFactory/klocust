@@ -20,11 +20,11 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/klog/v2"
 )
 
 // Builder is used to build cobra commands.
@@ -32,7 +32,7 @@ type Builder interface {
 	WithDescription(description string) Builder
 	WithLongDescription(long string) Builder
 	WithExample(comment, command string) Builder
-	WithFlags(adder func(*pflag.FlagSet)) Builder
+	WithFlags(flags []*Flag) Builder
 	SetAliases(alias []string) Builder
 	WithCommonFlags() Builder
 	Hidden() Builder
@@ -76,8 +76,11 @@ func (b *builder) WithCommonFlags() Builder {
 	return b
 }
 
-func (b *builder) WithFlags(adder func(*pflag.FlagSet)) Builder {
-	adder(b.cmd.Flags())
+func (b *builder) WithFlags(flags []*Flag) Builder {
+	for _, f := range flags {
+		fl := f.flag()
+		b.cmd.Flags().AddFlag(fl)
+	}
 	return b
 }
 
@@ -94,6 +97,7 @@ func (b *builder) SetAliases(alias []string) Builder {
 func (b *builder) ExactArgs(argCount int, action func(context.Context, io.Writer, *cobra.Command, []string) error) *cobra.Command {
 	b.cmd.Args = cobra.ExactArgs(argCount)
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		logrus.Debugf("Passing argument: %s", strings.Join(args, ","))
 		return handleWellKnownErrors(action(b.cmd.Context(), b.cmd.OutOrStdout(), cmd, args))
 	}
 	return &b.cmd
@@ -113,8 +117,7 @@ func handleWellKnownErrors(err error) error {
 	}
 
 	if errors.IsUnauthorized(err) {
-		klog.Errorf("Please check your kubeconfig: %v", err)
-		return nil
+		return fmt.Errorf("please check your kubeconfig: %v", err)
 	}
 
 	return err

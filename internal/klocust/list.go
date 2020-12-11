@@ -17,6 +17,7 @@ limitations under the License.
 package klocust
 
 import (
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -24,9 +25,9 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	v1 "k8s.io/api/apps/v1"
-	"k8s.io/klog/v2"
 
 	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
 func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
@@ -45,9 +46,14 @@ func getLocustDeployments(namespace string) ([]v1.Deployment, error) {
 	return locustDeployments, nil
 }
 
-func PrintLocustDeployments(namespace string) error {
-	if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
-		return err
+// ListLocustDeployments shows list of locust cluster in kubernetes cluster
+func ListLocustDeployments(out io.Writer, namespace string, allNamespace bool) error {
+	if !allNamespace {
+		if _, err := kube.SetCurrentNamespaceIfBlank(&namespace); err != nil {
+			return err
+		}
+	} else {
+		namespace = ""
 	}
 
 	locustDeployments, err := getLocustDeployments(namespace)
@@ -55,15 +61,21 @@ func PrintLocustDeployments(namespace string) error {
 		return err
 	}
 
-	klog.Infof(">>> %d locust deployments in %s namespace. (PREFIX: %s)\n",
+	if allNamespace {
+		namespace = "all"
+	}
+
+	printer.Green.Fprintf(out, ">>> %d locust deployments in %s namespace(s). (PREFIX: %s)\n",
 		len(locustDeployments), namespace, locustMainDeploymentPrefix)
 
 	if len(locustDeployments) == 0 {
+		printer.Default.Fprintf(out, "No cluster exists in %s namespace(s)\n", namespace)
+		printer.Default.Fprintln(out, "You can find clusters in other Namespaces with -A options")
 		return nil
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"NAME", "DEPLOYMENT", "READY", "UP-TO-DATE", "AVAILABLE", "AGE"})
+	table.SetHeader(createListTableHeader(allNamespace))
 	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
@@ -71,16 +83,29 @@ func PrintLocustDeployments(namespace string) error {
 		name := d.Name[len(locustMainDeploymentPrefix):]
 		age := time.Since(d.CreationTimestamp.Time).Round(time.Second)
 
-		table.Append([]string{
+		var values []string
+		if allNamespace {
+			values = append(values, d.Namespace)
+		}
+
+		table.Append(append(values, []string{
 			name,
 			d.Name,
 			strconv.Itoa(int(d.Status.ReadyReplicas)) + "/" + strconv.Itoa(int(d.Status.Replicas)),
 			strconv.Itoa(int(d.Status.UpdatedReplicas)),
 			strconv.Itoa(int(d.Status.AvailableReplicas)),
-			age.String()},
-		)
+			age.String()}...,
+		))
 	}
 	table.Render()
 
 	return nil
+}
+
+func createListTableHeader(allNamespace bool) []string {
+	var header []string
+	if allNamespace {
+		header = append(header, "NAMESPACE")
+	}
+	return append(header, []string{"NAME", "DEPLOYMENT", "READY", "UP-TO-DATE", "AVAILABLE", "AGE"}...)
 }
