@@ -26,7 +26,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	v1 "k8s.io/api/apps/v1"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 

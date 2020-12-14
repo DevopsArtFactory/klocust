@@ -23,10 +23,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube/handler"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
+	"github.com/DevopsArtFactory/klocust/pkg/util"
 )
 
 func deleteFromYamlFiles(out io.Writer, namespace string, locustName string) error {

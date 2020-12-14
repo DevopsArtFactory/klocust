@@ -28,7 +28,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/yaml"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
 )
 
 var (

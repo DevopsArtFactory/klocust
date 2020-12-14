@@ -23,7 +23,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/util"
 )
 
 var (

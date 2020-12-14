@@ -22,7 +22,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/DevopsArtFactory/klocust/internal/klocust"
+	"github.com/DevopsArtFactory/klocust/pkg/klocust"
 )
 
 func doDelete(_ context.Context, out io.Writer, _ *cobra.Command, args []string) error {

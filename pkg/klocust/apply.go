@@ -24,11 +24,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
-	"github.com/DevopsArtFactory/klocust/internal/schemas"
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube/handler"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
+	"github.com/DevopsArtFactory/klocust/pkg/schemas"
+	"github.com/DevopsArtFactory/klocust/pkg/util"
 )
 
 func renderProjectTemplates(locustName string) ([]string, error) {

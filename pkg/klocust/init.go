@@ -22,10 +22,10 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/DevopsArtFactory/klocust/internal/schemas"
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
+	"github.com/DevopsArtFactory/klocust/pkg/schemas"
+	"github.com/DevopsArtFactory/klocust/pkg/util"
 )
 
 func downloadDefaultTemplates(out io.Writer) error {
