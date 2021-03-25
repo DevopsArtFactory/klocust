@@ -32,7 +32,7 @@ func doInit(_ context.Context, out io.Writer, _ *cobra.Command, args []string) e
 
 func NewInitCmd() *cobra.Command {
 	return NewCmd("init").
-		WithDescription("initiate klocust cluster").
+		WithDescription("Initiate klocust cluster").
 		WithCommonFlags().
 		ExactArgs(1, doInit)
 }
