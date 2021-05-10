@@ -1,6 +1,6 @@
 module github.com/DevopsArtFactory/klocust
 
-go 1.14
+go 1.16
 
 require (
 	github.com/GoogleContainerTools/skaffold v1.17.2

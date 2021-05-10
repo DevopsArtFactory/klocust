@@ -30,6 +30,17 @@ var (
 	userHomeDir, _                = os.UserHomeDir()
 	locustHomeDir                 = userHomeDir + "/.klocust"
 	locustHomeDefaultTemplatesDir = locustHomeDir + "/_default_templates"
+
+	locustFilenames = []string{
+		defaultLocustFilename,
+
+		valuesFilename,
+		configMapFilename,
+		mainDeploymentFilename,
+		workerDeploymentFilename,
+		serviceFilename,
+		ingressFilename,
+	}
 )
 
 const (
@@ -46,31 +57,18 @@ const (
 	configMapFilename        = "configmap.yaml"
 	valuesFilename           = "values.yaml"
 
-	locustGitRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
-
-	DefaultBufferSize int64 = 1024
+	locustGitHubRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
 
 	// DefaultLogLevel is the default global verbosity
 	DefaultLogLevel = logrus.WarnLevel
 )
 
-var locustFilenames = []string{
-	defaultLocustFilename,
-
-	valuesFilename,
-	configMapFilename,
-	mainDeploymentFilename,
-	workerDeploymentFilename,
-	serviceFilename,
-	ingressFilename,
-}
-
-func getLocustGitRepoTemplatePath(filename string) string {
-	subDir := "main/_default_templates/templates"
+func getEmbedTemplatePath(filename string) string {
+	subDir := "templates"
 	if strings.HasSuffix(filename, ".py") {
-		subDir = "main/_default_templates/tasks"
+		subDir = "tasks"
 	}
-	return fmt.Sprintf("%s/%s/%s", locustGitRepo, subDir, filename)
+	return fmt.Sprintf("_default_templates/%s/%s", subDir, filename)
 }
 
 func getLocustHomeTemplatesPath(filename string) string {

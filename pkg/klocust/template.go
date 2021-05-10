@@ -17,6 +17,7 @@ limitations under the License.
 package klocust
 
 import (
+	"embed"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -30,13 +31,16 @@ import (
 	"github.com/DevopsArtFactory/klocust/pkg/util"
 )
 
+//go:embed _default_templates
+var defaultTemplates embed.FS
+
 func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value schemas.LocustValues) (string, error) {
 	if util.IsFileExists(valuesFilePath) {
 		return "", NewFileExistsError(valuesFilePath)
 	}
 
 	t := template.Must(
-		template.New("values.yaml").Funcs(sprig.TxtFuncMap()).ParseFiles(valuesTemplatePath))
+		template.New(filepath.Base(valuesTemplatePath)).Funcs(sprig.TxtFuncMap()).ParseFS(defaultTemplates, valuesTemplatePath))
 
 	f, err := os.Create(valuesFilePath)
 	if err != nil {
@@ -47,7 +51,7 @@ func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value sc
 		return "", err
 	}
 
-	return valuesFilePath, nil
+	return valuesFilePath, err
 }
 
 func toYAML(v interface{}) string {
