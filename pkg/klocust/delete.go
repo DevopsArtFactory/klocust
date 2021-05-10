@@ -17,31 +17,21 @@ limitations under the License.
 package klocust
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube/handler"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
-func deleteFromYamlFiles(out io.Writer, namespace string, locustName string) error {
-	for _, filename := range locustFilenames {
-		if !strings.HasSuffix(filename, ".yaml") ||
-			strings.HasSuffix(filename, valuesFilename) {
-			continue
-		}
-
-		filenameWithPath := getLocustProjectPath(locustName, filename)
-		if !util.IsFileExists(filenameWithPath) {
-			continue
-		}
-
-		obj, err := handler.Delete(namespace, filenameWithPath)
+func deleteYamlFiles(out io.Writer, namespace string, renderedBufList []*bytes.Buffer) error {
+	for _, renderedBuf := range renderedBufList {
+		obj, err := handler.Delete(namespace, renderedBuf)
 		if err != nil {
 			return err
 		}
@@ -68,9 +58,16 @@ func DeleteLocust(out io.Writer, namespace string, locustName string) error {
 		return nil
 	}
 
-	if err := deleteFromYamlFiles(out, namespace, locustName); err != nil {
+	renderedBufList, err := renderProjectTemplates(locustName)
+	if err != nil {
 		return err
 	}
+
+	if err := deleteYamlFiles(out, namespace, renderedBufList); err != nil {
+		return err
+	}
+
+	printer.Green.Fprintf(out, "> End delete locust cluster: %s\n\n", locustName)
 
 	return nil
 }

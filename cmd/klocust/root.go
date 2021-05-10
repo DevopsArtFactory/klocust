@@ -28,8 +28,8 @@ import (
 	"github.com/spf13/viper"
 	"k8s.io/kubectl/pkg/util/templates"
 
-	"github.com/DevopsArtFactory/klocust/internal/klocust"
-	"github.com/DevopsArtFactory/klocust/internal/version"
+	"github.com/DevopsArtFactory/klocust/pkg/klocust"
+	"github.com/DevopsArtFactory/klocust/pkg/version"
 )
 
 var (

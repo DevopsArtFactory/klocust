@@ -17,9 +17,9 @@ limitations under the License.
 package handler
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -28,7 +28,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/yaml"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
 )
 
 var (
@@ -40,17 +40,13 @@ var (
 
 type ObjHandler map[string]func(context.Context, kubernetes.Interface, *unstructured.Unstructured, []byte) error
 
-func handleObjFromYamlFile(handler ObjHandler, filename string) (*unstructured.Unstructured, error) {
+func handleObjFromYamlFile(handler ObjHandler, renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
 	client, err := kube.GetKubeClient()
 	if err != nil {
 		return nil, err
 	}
 
-	bytes, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
+	bytes := renderedBuf.Bytes()
 	var typeMeta runtime.TypeMeta
 	if err := yaml.Unmarshal(bytes, &typeMeta); err != nil {
 		return nil, fmt.Errorf("%v, decode yaml failed", err)

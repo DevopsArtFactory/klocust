@@ -22,7 +22,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/DevopsArtFactory/klocust/internal/version"
+	"github.com/DevopsArtFactory/klocust/pkg/version"
 )
 
 // Get klocust version

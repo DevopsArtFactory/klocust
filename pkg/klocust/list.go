@@ -26,7 +26,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	v1 "k8s.io/api/apps/v1"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
@@ -65,8 +65,9 @@ func ListLocustDeployments(out io.Writer, namespace string, allNamespace bool) e
 		namespace = "all"
 	}
 
-	printer.Green.Fprintf(out, ">>> %d locust deployments in %s namespace(s). (PREFIX: %s)\n",
-		len(locustDeployments), namespace, locustMainDeploymentPrefix)
+	printer.Green.Fprintf(out, ">>> %d locust deployments in ", len(locustDeployments))
+	printer.Yellow.Fprintf(out, "%s", namespace)
+	printer.Green.Fprintf(out, " namespace(s). (PREFIX: %s)\n", locustMainDeploymentPrefix)
 
 	if len(locustDeployments) == 0 {
 		printer.Default.Fprintf(out, "No cluster exists in %s namespace(s)\n", namespace)

@@ -17,6 +17,7 @@ limitations under the License.
 package klocust
 
 import (
+	"bytes"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -24,23 +25,15 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	"github.com/DevopsArtFactory/klocust/internal/kube"
-	"github.com/DevopsArtFactory/klocust/internal/kube/handler"
-	"github.com/DevopsArtFactory/klocust/internal/schemas"
-	"github.com/DevopsArtFactory/klocust/internal/util"
+	"github.com/DevopsArtFactory/klocust/pkg/kube"
+	"github.com/DevopsArtFactory/klocust/pkg/kube/handler"
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
+	"github.com/DevopsArtFactory/klocust/pkg/schemas"
 )
 
-func renderProjectTemplates(locustName string) ([]string, error) {
-	var renderedFileList []string
+func renderProjectTemplates(locustName string) ([]*bytes.Buffer, error) {
+	var renderedBufList []*bytes.Buffer
 
-	projectDir := getLocustProjectDir(locustName)
-
-	if !util.IsDirExists(projectDir) {
-		if err := util.CreateDir(projectDir); err != nil {
-			return nil, err
-		}
-	}
 	yamlFile, err := ioutil.ReadFile(getLocustConfigFilename(locustName))
 	if err != nil {
 		return nil, err
@@ -51,42 +44,33 @@ func renderProjectTemplates(locustName string) ([]string, error) {
 		return nil, err
 	}
 
-	// Create ./.klocust/{locustName}/{...LocustFilenames}.yaml
 	for _, filename := range locustFilenames {
 		if !strings.HasSuffix(filename, ".yaml") ||
 			strings.HasSuffix(filename, valuesFilename) {
 			continue
 		}
 
-		filePath := getLocustProjectPath(locustName, filename)
-
-		renderedFile, err := renderTemplateFile(
-			getLocustHomeTemplatesPath(filename),
-			filePath,
+		renderedBuf, err := renderTemplateToBuf(
+			getEmbedTemplatePath(filename),
 			values)
 
 		if err != nil {
 			return nil, err
 		}
 
-		if renderedFile == "" {
+		if renderedBuf == nil {
 			continue
 		}
 
-		renderedFileList = append(renderedFileList, renderedFile)
+		renderedBufList = append(renderedBufList, renderedBuf)
 	}
 
-	return renderedFileList, nil
+	return renderedBufList, nil
 }
 
-func applyYamlFiles(out io.Writer, namespace string, yamlFiles []string) error {
-	for _, filename := range yamlFiles {
-		if !strings.HasSuffix(filename, ".yaml") ||
-			strings.HasSuffix(filename, valuesFilename) {
-			continue
-		}
-
-		obj, err := handler.Apply(namespace, filename)
+func applyYamlFiles(out io.Writer, namespace string, renderedBufList []*bytes.Buffer) error {
+	for _, renderedBuf := range renderedBufList {
+		obj, err := handler.Apply(namespace, renderedBuf)
 		if err != nil {
 			return err
 		}
@@ -117,13 +101,12 @@ func ApplyLocust(out io.Writer, namespace string, locustName string) error {
 	} else {
 		printer.Default.Fprintf(out, "> Start creating locust cluster: %s\n", locustName)
 	}
-
-	yamlFiles, err := renderProjectTemplates(locustName)
+	renderedBufList, err := renderProjectTemplates(locustName)
 	if err != nil {
 		return err
 	}
 
-	if err := applyYamlFiles(out, namespace, yamlFiles); err != nil {
+	if err := applyYamlFiles(out, namespace, renderedBufList); err != nil {
 		return err
 	}
 
