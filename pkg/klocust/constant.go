@@ -18,7 +18,6 @@ package klocust
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -27,10 +26,6 @@ import (
 )
 
 var (
-	userHomeDir, _                = os.UserHomeDir()
-	locustHomeDir                 = userHomeDir + "/.klocust"
-	locustHomeDefaultTemplatesDir = locustHomeDir + "/_default_templates"
-
 	locustFilenames = []string{
 		defaultLocustFilename,
 
@@ -57,8 +52,6 @@ const (
 	configMapFilename        = "configmap.yaml"
 	valuesFilename           = "values.yaml"
 
-	locustGitHubRepo = "https://raw.githubusercontent.com/DevopsArtFactory/klocust"
-
 	// DefaultLogLevel is the default global verbosity
 	DefaultLogLevel = logrus.WarnLevel
 )
@@ -69,14 +62,6 @@ func getEmbedTemplatePath(filename string) string {
 		subDir = "tasks"
 	}
 	return fmt.Sprintf("_default_templates/%s/%s", subDir, filename)
-}
-
-func getLocustHomeTemplatesPath(filename string) string {
-	subDir := "templates"
-	if strings.HasSuffix(filename, ".py") {
-		subDir = "tasks"
-	}
-	return fmt.Sprintf("%s/%s/%s", locustHomeDefaultTemplatesDir, subDir, filename)
 }
 
 func getLocustProjectDir(locustName string) string {

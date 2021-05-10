@@ -61,7 +61,7 @@ func renderProjectTemplates(locustName string) ([]string, error) {
 		filePath := getLocustProjectPath(locustName, filename)
 
 		renderedFile, err := renderTemplateFile(
-			getLocustHomeTemplatesPath(filename),
+			getEmbedTemplatePath(filename),
 			filePath,
 			values)
 

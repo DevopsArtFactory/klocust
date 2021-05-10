@@ -97,7 +97,7 @@ func renderTemplateFile(tmplFilepath string, projectFilepath string, values sche
 	filename := filepath.Base(tmplFilepath)
 
 	t := template.Must(
-		template.New(filename).Funcs(customFuncMap()).ParseFiles(tmplFilepath))
+		template.New(filename).Funcs(customFuncMap()).ParseFS(defaultTemplates, tmplFilepath))
 
 	f, err := os.Create(projectFilepath)
 	if err != nil {
