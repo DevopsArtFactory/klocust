@@ -17,6 +17,7 @@ limitations under the License.
 package klocust
 
 import (
+	"bytes"
 	"embed"
 	"io/ioutil"
 	"os"
@@ -93,32 +94,20 @@ func customFuncMap() template.FuncMap {
 	return f
 }
 
-func renderTemplateFile(tmplFilepath string, projectFilepath string, values schemas.LocustValues) (string, error) {
+func renderTemplateToBuf(tmplFilepath string, values schemas.LocustValues) (*bytes.Buffer, error) {
 	filename := filepath.Base(tmplFilepath)
 
 	t := template.Must(
 		template.New(filename).Funcs(customFuncMap()).ParseFS(defaultTemplates, tmplFilepath))
 
-	f, err := os.Create(projectFilepath)
-	if err != nil {
-		return "", err
+	var buf bytes.Buffer
+	if err := t.Execute(&buf, values); err != nil {
+		return nil, err
 	}
 
-	if err := t.Execute(f, values); err != nil {
-		return "", err
+	if buf.Len() == 0 {
+		return nil, nil
 	}
 
-	size, err := util.GetFileSize(projectFilepath)
-	if err != nil {
-		return "", err
-	}
-
-	if size == 0 {
-		if err := util.DeleteFile(projectFilepath); err != nil {
-			return "", err
-		}
-		return "", nil
-	}
-
-	return projectFilepath, nil
+	return &buf, nil
 }

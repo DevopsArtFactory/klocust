@@ -17,6 +17,7 @@ limitations under the License.
 package handler
 
 import (
+	"bytes"
 	"context"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -66,6 +67,6 @@ func applyIngress(ctx context.Context, client kubernetes.Interface, obj *unstruc
 	return nil
 }
 
-func Apply(namespace, filename string) (*unstructured.Unstructured, error) {
-	return handleObjFromYamlFile(applyFuncs, filename)
+func Apply(namespace string, renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
+	return handleObjFromYamlFile(applyFuncs, renderedBuf)
 }

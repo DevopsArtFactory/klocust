@@ -17,6 +17,7 @@ limitations under the License.
 package handler
 
 import (
+	"bytes"
 	"context"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -53,6 +54,6 @@ func deleteIngress(ctx context.Context, client kubernetes.Interface, obj *unstru
 		ctx, obj.GetName(), metav1.DeleteOptions{})
 }
 
-func Delete(namespace, filename string) (*unstructured.Unstructured, error) {
-	return handleObjFromYamlFile(deleteFuncs, filename)
+func Delete(namespace string, renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
+	return handleObjFromYamlFile(deleteFuncs, renderedBuf)
 }
