@@ -14,7 +14,7 @@
 
 FROM dockercore/golang-cross:1.13.15 as base
 
-ENV GO_VERSION 1.14.2
+ENV GO_VERSION 1.16.3
 
 RUN rm -Rf /usr/local/go && mkdir /usr/local/go
 RUN curl --fail --show-error --silent --location https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \

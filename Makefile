@@ -30,12 +30,12 @@ GCP_PROJECT ?= klocust
 SUPPORTED_PLATFORMS = linux-amd64 darwin-amd64 windows-amd64.exe linux-arm64
 BUILD_PACKAGE = $(REPOPATH)/$(COMMAND_PKG)
 
-KLOCUST_TEST_PACKAGES = ./internal/... ./cmd/...
+KLOCUST_TEST_PACKAGES = ./pkg/... ./cmd/...
 GO_FILES = $(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./pkg/diag/*")
 
 VERSION_PACKAGE = $(REPOPATH)/pkg/version
 COMMIT = $(shell git rev-parse HEAD)
-TEST_PACKAGES = ./internal/... ./cmd/...
+TEST_PACKAGES = ./pkg/... ./cmd/...
 
 LDFLAGS_linux = -static
 LDFLAGS_darwin =
@@ -115,7 +115,7 @@ release: clean fmt linters test cross $(BUILD_DIR)/VERSION upload-only
 build: fmt cross $(BUILD_DIR)/VERSION
 
 .PHONY: upload-only
-upload-only: version
+upload-only:
 	@ cp $(BUILD_DIR)/$(PROJECT)-darwin-amd64 $(BUILD_DIR)/$(PROJECT)
 	@ aws s3 cp $(BUILD_DIR)/ $(S3_RELEASE_PATH)/ --recursive --include "$(PROJECT)-*" --acl public-read
 	@ aws s3 cp $(S3_RELEASE_PATH)/ $(S3_RELEASE_LATEST)/ --recursive --acl public-read
