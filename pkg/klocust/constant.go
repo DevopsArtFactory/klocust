@@ -39,7 +39,6 @@ var (
 )
 
 const (
-	locustlProjectDir                   = "./.klocust"
 	locustMainDeploymentPrefix          = "locust-main-"
 	locustConfigFileSuffixWithExtension = "-klocust.yaml"
 	locustFileSuffixWithExtension       = "-locustfile.py"
@@ -62,14 +61,6 @@ func getEmbedTemplatePath(filename string) string {
 		subDir = "tasks"
 	}
 	return fmt.Sprintf("_default_templates/%s/%s", subDir, filename)
-}
-
-func getLocustProjectDir(locustName string) string {
-	return fmt.Sprintf("%s/%s", locustlProjectDir, locustName)
-}
-
-func getLocustProjectPath(locustName string, filename string) string {
-	return fmt.Sprintf("%s/%s", getLocustProjectDir(locustName), filename)
 }
 
 func getLocustConfigFilename(locustName string) string {
