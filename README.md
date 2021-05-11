@@ -13,7 +13,7 @@ Klocust is a command-line tool for managing [Locust](https://locust.io/) distrib
 - [ExternalDNS](https://github.com/kubernetes-sigs/external-dns)   
    create(update) and delete domain for your locust cluster automatically.
 
-### Install klocust binary (TODO)
+### Install klocust binary
 ```bash
 $ brew tap DevopsArtFactory/klocust
 $ brew update
