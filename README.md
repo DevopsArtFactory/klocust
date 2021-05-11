@@ -15,7 +15,7 @@ Klocust is a command-line tool for managing [Locust](https://locust.io/) distrib
 
 ### Install klocust binary
 ```bash
-$ brew tap DevopsArtFactory/klocust
+$ brew tap DevopsArtFactory/devopsart
 $ brew update
 $ brew install klocust 
 ``` 
