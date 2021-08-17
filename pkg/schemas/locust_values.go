@@ -32,8 +32,11 @@ type LocustValues struct {
 		LocustFileContents string `yaml:"locustFileContents"`
 	}
 
-	// Loucst Main Node
+	// Locust Main Node
 	Main struct {
+		// Docker image of Main Node
+		Image string `yaml:"image"`
+
 		// Resource Requests of Main Node
 		Requests struct {
 			// Request of Main Node CPU
@@ -68,6 +71,9 @@ type LocustValues struct {
 
 	// Locust Worker Node
 	Worker struct {
+		// Docker image of worker node
+		Image string `yaml:"image"`
+
 		// Count of Worker Node
 		Count int `yaml:"count"`
 

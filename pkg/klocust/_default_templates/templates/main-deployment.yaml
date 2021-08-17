@@ -36,7 +36,7 @@ spec:
 {{- end }}
       containers:
         - name: locust-main
-          image: locustio/locust:latest
+          image: {{ .Main.Image }}
           args: ["-f", "/mnt/locust/{{ .LocustName }}-locustfile.py", "--master"]
           resources:
             requests:
