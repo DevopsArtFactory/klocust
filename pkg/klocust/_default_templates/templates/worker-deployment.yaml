@@ -41,7 +41,7 @@ spec:
 {{- end }}
       containers:
         - name: locust-worker
-          image: locustio/locust:latest
+          image: {{ .Worker.Image }}
           resources:
             requests:
               cpu: {{ .Worker.Requests.CPU }}

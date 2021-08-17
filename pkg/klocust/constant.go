@@ -53,6 +53,8 @@ const (
 
 	// DefaultLogLevel is the default global verbosity
 	DefaultLogLevel = logrus.WarnLevel
+
+	DefaultDockerImage = "locustio/locust:latest"
 )
 
 func getEmbedTemplatePath(filename string) string {

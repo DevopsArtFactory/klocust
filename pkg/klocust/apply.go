@@ -44,6 +44,8 @@ func renderProjectTemplates(locustName string) ([]*bytes.Buffer, error) {
 		return nil, err
 	}
 
+	SetDefaultToValues(&values)
+
 	for _, filename := range locustFilenames {
 		if !strings.HasSuffix(filename, ".yaml") ||
 			strings.HasSuffix(filename, valuesFilename) {
@@ -116,4 +118,15 @@ func ApplyLocust(out io.Writer, namespace string, locustName string) error {
 		return err
 	}
 	return nil
+}
+
+// SetDefaultToValues sets default values if user does not specify.
+func SetDefaultToValues(values *schemas.LocustValues) {
+	if values.Worker.Image == "" {
+		values.Worker.Image = DefaultDockerImage
+	}
+
+	if values.Main.Image == "" {
+		values.Main.Image = DefaultDockerImage
+	}
 }
