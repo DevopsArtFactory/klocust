@@ -21,7 +21,6 @@ metadata:
       nginx.org/proxy-connect-timeout: "30s"
       nginx.org/proxy-read-timeout: "20s"
       nginx.org/client-max-body-size: "4m"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     {{- end }}
 {{- with .Ingress.Annotations }}
 {{ toYaml . | indent 6 }}
@@ -36,7 +35,7 @@ spec:
     - host: {{ .Ingress.Host }}
       http:
         paths:
-          - path: /*
+          - path: /
             backend:
               serviceName: locust-main-{{ .LocustName }}
               servicePort: {{ .Service.Port }}
