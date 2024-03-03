@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM dockercore/golang-cross:1.13.15 as base
+FROM vxcontrol/vxbuild-cross:latest as base
 
-ENV GO_VERSION 1.16.3
+ENV GO_VERSION 1.21.6
 
-RUN rm -Rf /usr/local/go && mkdir /usr/local/go
+RUN rm -rf /usr/local/go && mkdir /usr/local/go
 RUN curl --fail --show-error --silent --location https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \
     | tar xz --directory=/usr/local/go --strip-components=1
 
