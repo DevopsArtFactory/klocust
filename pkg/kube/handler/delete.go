@@ -50,10 +50,10 @@ func deleteService(ctx context.Context, client kubernetes.Interface, obj *unstru
 }
 
 func deleteIngress(ctx context.Context, client kubernetes.Interface, obj *unstructured.Unstructured, _ []byte) error {
-	return client.NetworkingV1beta1().Ingresses(obj.GetNamespace()).Delete(
+	return client.NetworkingV1().Ingresses(obj.GetNamespace()).Delete(
 		ctx, obj.GetName(), metav1.DeleteOptions{})
 }
 
-func Delete(namespace string, renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
+func Delete(renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
 	return handleObjFromYamlFile(deleteFuncs, renderedBuf)
 }

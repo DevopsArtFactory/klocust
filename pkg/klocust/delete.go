@@ -29,9 +29,9 @@ import (
 	"github.com/DevopsArtFactory/klocust/pkg/printer"
 )
 
-func deleteYamlFiles(out io.Writer, namespace string, renderedBufList []*bytes.Buffer) error {
+func deleteYamlFiles(out io.Writer, renderedBufList []*bytes.Buffer) error {
 	for _, renderedBuf := range renderedBufList {
-		obj, err := handler.Delete(namespace, renderedBuf)
+		obj, err := handler.Delete(renderedBuf)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ func DeleteLocust(out io.Writer, namespace string, locustName string) error {
 		return err
 	}
 
-	if err := deleteYamlFiles(out, namespace, renderedBufList); err != nil {
+	if err := deleteYamlFiles(out, renderedBufList); err != nil {
 		return err
 	}
 

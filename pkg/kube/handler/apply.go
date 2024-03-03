@@ -60,13 +60,13 @@ func applyService(ctx context.Context, client kubernetes.Interface, obj *unstruc
 }
 
 func applyIngress(ctx context.Context, client kubernetes.Interface, obj *unstructured.Unstructured, data []byte) error {
-	if _, err := client.NetworkingV1beta1().Ingresses(obj.GetNamespace()).Patch(
+	if _, err := client.NetworkingV1().Ingresses(obj.GetNamespace()).Patch(
 		ctx, obj.GetName(), types.ApplyPatchType, data, metav1.PatchOptions{FieldManager: "klocust"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func Apply(namespace string, renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
+func Apply(renderedBuf *bytes.Buffer) (*unstructured.Unstructured, error) {
 	return handleObjFromYamlFile(applyFuncs, renderedBuf)
 }
