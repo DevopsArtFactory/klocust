@@ -85,7 +85,7 @@ $(BUILD_DIR)/$(PROJECT)-%: $(STATIK_FILES) $(GO_FILES) $(BUILD_DIR) deploy/cross
 	$(eval ldflags = $(GO_LDFLAGS_$(os)))
 	$(eval tags = $(GO_BUILD_TAGS_$(os)))
 
-	docker build \
+	docker build --platform linux/amd64 \
 		--build-arg GOOS=$(os) \
 		--build-arg GOARCH=$(arch) \
 		--build-arg TAGS=$(tags) \
@@ -94,7 +94,7 @@ $(BUILD_DIR)/$(PROJECT)-%: $(STATIK_FILES) $(GO_FILES) $(BUILD_DIR) deploy/cross
 		-t klocust/cross \
 		.
 
-	docker run --rm klocust/cross cat /build/klocust > $@
+	docker run --rm --platform linux/amd64 klocust/cross cat /build/klocust > $@
 	shasum -a 256 $@ | tee $@.sha256
 	file $@ || true
 
