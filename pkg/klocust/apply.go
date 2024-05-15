@@ -70,9 +70,9 @@ func renderProjectTemplates(locustName string) ([]*bytes.Buffer, error) {
 	return renderedBufList, nil
 }
 
-func applyYamlFiles(out io.Writer, namespace string, renderedBufList []*bytes.Buffer) error {
+func applyYamlFiles(out io.Writer, renderedBufList []*bytes.Buffer) error {
 	for _, renderedBuf := range renderedBufList {
-		obj, err := handler.Apply(namespace, renderedBuf)
+		obj, err := handler.Apply(renderedBuf)
 		if err != nil {
 			return err
 		}
@@ -108,7 +108,7 @@ func ApplyLocust(out io.Writer, namespace string, locustName string) error {
 		return err
 	}
 
-	if err := applyYamlFiles(out, namespace, renderedBufList); err != nil {
+	if err := applyYamlFiles(out, renderedBufList); err != nil {
 		return err
 	}
 
