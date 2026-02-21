@@ -19,7 +19,6 @@ package klocust
 import (
 	"bytes"
 	"embed"
-	"io/ioutil"
 	"maps"
 	"os"
 	"path/filepath"
@@ -66,7 +65,7 @@ func toYAML(v any) string {
 }
 
 func readFromFile(filename string) string {
-	b, err := ioutil.ReadFile(filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		return ""
 	}
