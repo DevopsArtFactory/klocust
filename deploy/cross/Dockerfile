@@ -14,7 +14,7 @@
 
 FROM vxcontrol/vxbuild-cross:latest as base
 
-ENV GO_VERSION 1.21.6
+ENV GO_VERSION 1.26.0
 
 RUN rm -rf /usr/local/go && mkdir /usr/local/go
 RUN curl --fail --show-error --silent --location https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \

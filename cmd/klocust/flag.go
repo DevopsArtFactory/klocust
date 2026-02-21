@@ -28,9 +28,9 @@ type Flag struct {
 	Name               string
 	Shorthand          string
 	Usage              string
-	Value              interface{}
-	DefValue           interface{}
-	DefValuePerCommand map[string]interface{}
+	Value              any
+	DefValue           any
+	DefValuePerCommand map[string]any
 	FlagAddMethod      string
 	DefinedOn          []string
 	Hidden             bool
@@ -71,7 +71,7 @@ func (fl *Flag) flag() *pflag.Flag {
 		methodName = setDefaultMethodNameByType(reflect.ValueOf(fl.Value))
 	}
 
-	inputs := []interface{}{fl.Value, fl.Name}
+	inputs := []any{fl.Value, fl.Name}
 	if fl.FlagAddMethod != "Var" {
 		inputs = append(inputs, fl.DefValue)
 	}
@@ -99,14 +99,14 @@ func setDefaultMethodNameByType(v reflect.Value) string {
 		return "StringSliceVar"
 	case reflect.Struct:
 		return "Var"
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return setDefaultMethodNameByType(reflect.Indirect(v))
 	}
 
 	return ""
 }
 
-func reflectValueOf(values []interface{}) []reflect.Value {
+func reflectValueOf(values []any) []reflect.Value {
 	var results []reflect.Value
 	for _, v := range values {
 		results = append(results, reflect.ValueOf(v))

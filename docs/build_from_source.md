@@ -1,6 +1,6 @@
 # Build klocust CLI from Source
 
-1. Verify that you have Go 1.13+ installed.
+1. Verify that you have Go 1.26.0+ installed.
     ```bash
     $ go version
     ```
