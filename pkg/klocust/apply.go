@@ -19,7 +19,7 @@ package klocust
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -34,7 +34,7 @@ import (
 func renderProjectTemplates(locustName string) ([]*bytes.Buffer, error) {
 	var renderedBufList []*bytes.Buffer
 
-	yamlFile, err := ioutil.ReadFile(getLocustConfigFilename(locustName))
+	yamlFile, err := os.ReadFile(getLocustConfigFilename(locustName))
 	if err != nil {
 		return nil, err
 	}

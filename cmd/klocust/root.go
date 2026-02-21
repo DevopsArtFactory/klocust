@@ -70,7 +70,7 @@ func NewRootCommand(out, stderr io.Writer) *cobra.Command {
 		},
 	}
 
-	//Group by commands
+	// Group by commands
 	groups := templates.CommandGroups{
 		{
 			Message: "Initiates klocust cluster",
