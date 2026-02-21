@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"embed"
 	"io/ioutil"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -55,7 +56,7 @@ func renderValuesFile(valuesTemplatePath string, valuesFilePath string, value sc
 	return valuesFilePath, err
 }
 
-func toYAML(v interface{}) string {
+func toYAML(v any) string {
 	data, err := yaml.Marshal(v)
 	if err != nil {
 		// Swallow errors inside of a template.
@@ -88,9 +89,7 @@ func customFuncMap() template.FuncMap {
 		"getLocustFilename":     getLocustFilename,
 		"getFileSha256Checksum": getFileSha256Checksum,
 	}
-	for k, v := range extra {
-		f[k] = v
-	}
+	maps.Copy(f, extra)
 	return f
 }
 

@@ -29,6 +29,10 @@ import (
 // unless we really want to expose something to the network.
 const Loopback = "127.0.0.1"
 
+// Network address which represent any address. This is the default that
+// we should use when checking if port is free.
+const Any = ""
+
 type PortSet struct {
 	ports map[int]bool
 	lock  sync.Mutex
@@ -87,23 +91,26 @@ func (f *PortSet) List() []int {
 	return list
 }
 
-// First, check if the provided port is available on the specified address. If so, use it.
+// GetAvailablePort returns an available port that is near the requested port when possible.
+// First, check if the provided port is available on the specified address and INADDR_ANY. If so, use it.
 // If not, check if any of the next 10 subsequent ports are available.
 // If not, check if any of ports 4503-4533 are available.
 // If not, return a random port, which hopefully won't collide with any future containers
-
-// See https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt,
+//
+// See https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt
 func GetAvailablePort(address string, port int, usedPorts *PortSet) int {
-	if getPortIfAvailable(address, port, usedPorts) {
-		return port
-	}
-
-	// try the next 10 ports after the provided one
-	for i := 0; i < 10; i++ {
-		port++
+	if port > 0 {
 		if getPortIfAvailable(address, port, usedPorts) {
-			logrus.Debugf("found open port: %d", port)
 			return port
+		}
+
+		// try the next 10 ports after the provided one
+		for i := 0; i < 10; i++ {
+			port++
+			if getPortIfAvailable(address, port, usedPorts) {
+				logrus.Debugf("found open port: %d", port)
+				return port
+			}
 		}
 	}
 
@@ -135,11 +142,20 @@ func getPortIfAvailable(address string, p int, usedPorts *PortSet) bool {
 }
 
 func IsPortFree(address string, p int) bool {
-	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", address, p))
-	if err != nil {
+	// Ensure the port is available across all interfaces
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", p))
+	if err != nil || l == nil {
 		return false
 	}
-
 	l.Close()
+
+	if address != Any {
+		// Ensure the port is available on the specific interface too
+		l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", address, p))
+		if err != nil || l == nil {
+			return false
+		}
+		l.Close()
+	}
 	return true
 }

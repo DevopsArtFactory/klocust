@@ -31,7 +31,7 @@ func main() {
 		if errors.Is(err, context.Canceled) {
 			logrus.Debugf("ignore error since context is cancelled: %s", err)
 		} else {
-			logrus.Errorf(err.Error())
+			logrus.Error(err)
 			os.Exit(1)
 		}
 	}

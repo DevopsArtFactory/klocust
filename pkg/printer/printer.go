@@ -45,11 +45,11 @@ var (
 )
 
 // Fprintln outputs with color output.
-func (p Printer) Fprintln(out io.Writer, a ...interface{}) {
+func (p Printer) Fprintln(out io.Writer, a ...any) {
 	p.Printer.Fprintln(out, a...)
 }
 
 // Fprintf outputs with format
-func (p Printer) Fprintf(out io.Writer, format string, a ...interface{}) {
+func (p Printer) Fprintf(out io.Writer, format string, a ...any) {
 	p.Printer.Fprintf(out, format, a...)
 }
